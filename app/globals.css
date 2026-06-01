@@ -7,12 +7,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Force pointer cursor on ALL interactive elements and their children
+   so text inside buttons never flashes a text/I-beam cursor          */
 button,
+button *,
 a,
-[role="button"] {
+a *,
+[role="button"],
+[role="button"] * {
   -webkit-user-select: none;
   user-select: none;
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 /* ---- Smooth scrolling ---- */
@@ -27,7 +32,7 @@ html {
   outline: none;
 }
 *:focus-visible {
-  outline: 2px solid #BE5436;
+  outline: 2px solid #C9963F;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -37,10 +42,10 @@ html {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FBF4E6;
+  background: #F5F5F5;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E2D2B4;
+  background: #DCDCDC;
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {

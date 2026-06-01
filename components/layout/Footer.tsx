@@ -7,7 +7,7 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-terracotta flex items-center justify-center text-white">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#E8C870] to-gold flex items-center justify-center text-white">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4 13h16a8 8 0 0 1-16 0Z" />
                   <circle cx="12" cy="7" r="2.6" />

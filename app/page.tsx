@@ -28,7 +28,7 @@ export default function HomePage() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(60% 80% at 88% 10%, rgba(201,150,63,.16), transparent 60%), radial-gradient(50% 70% at 6% 92%, rgba(110,115,64,.12), transparent 60%)',
+              'radial-gradient(60% 80% at 88% 10%, rgba(201,150,63,.22), transparent 60%), radial-gradient(50% 70% at 6% 92%, rgba(0,0,0,.04), transparent 60%)',
           }}
         />
         <div className="max-w-[1180px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -128,7 +128,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="rounded-[26px] overflow-hidden shadow-bowl" style={{ aspectRatio: '5/4' }}>
-            <BowlSVG c1="#C9D2A0" c2="#6E7340" id="home-mkt" />
+            <BowlSVG c1="#E8D888" c2="#B89030" id="home-mkt" />
           </div>
         </div>
       </section>
@@ -137,7 +137,7 @@ export default function HomePage() {
       <section className="py-16 px-5 bg-cream-2">
         <div className="max-w-[1180px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="rounded-[26px] overflow-hidden shadow-bowl md:order-first order-last" style={{ aspectRatio: '5/4' }}>
-            <BowlSVG c1="#F0C9C2" c2="#BE5436" id="home-del" />
+            <BowlSVG c1="#F2DC90" c2="#C9963F" id="home-del" />
           </div>
           <div>
             <div className="text-[13px] font-bold tracking-widest uppercase text-gold-dk mb-3">Local Delivery</div>
@@ -220,8 +220,8 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2.5 mt-4">
             {[
-              ['#E8D49A','#C9963F'], ['#F0C9C2','#BE5436'], ['#C9D2A0','#6E7340'],
-              ['#E3B7C9','#9E4128'], ['#E8D49A','#6E7340'], ['#F0C9C2','#C9963F'],
+              ['#F2DC90','#C9963F'], ['#F0DFA8','#C9963F'], ['#E8D888','#B89030'],
+              ['#1A1A1A','#C9963F'], ['#F2DC90','#A87A2B'], ['#E0D080','#C9963F'],
             ].map(([a, b], i) => (
               <div key={i} className="rounded-xl overflow-hidden cursor-pointer hover:scale-[1.04] transition-transform duration-200" style={{ aspectRatio: '1' }}>
                 <BowlSVG c1={a} c2={b} id={`ig-${i}`} />

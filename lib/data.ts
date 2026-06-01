@@ -45,10 +45,10 @@ export interface Order {
 }
 
 export const CATEGORY_COLORS: Record<Category, [string, string]> = {
-  'Hummus & Dips': ['#E8D49A', '#C9963F'],
-  'Lebneh':        ['#F0C9C2', '#BE5436'],
-  'Bundles':       ['#C9D2A0', '#6E7340'],
-  'Seasonal':      ['#E3B7C9', '#9E4128'],
+  'Hummus & Dips': ['#F2DC90', '#C9963F'],  // light gold → gold
+  'Lebneh':        ['#F0DFA8', '#C9963F'],  // pale gold → gold
+  'Bundles':       ['#E8D888', '#B89030'],  // warm gold → dark gold
+  'Seasonal':      ['#1A1A1A', '#C9963F'],  // black → gold (dramatic)
 };
 
 export const PRODUCTS: Product[] = [

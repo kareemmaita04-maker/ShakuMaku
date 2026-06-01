@@ -25,9 +25,9 @@ export function Header() {
     <>
       <header className="sticky top-0 z-60 bg-cream/86 backdrop-blur-md border-b border-line">
         <div className="max-w-[1180px] mx-auto px-5 flex items-center justify-between h-[74px]">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 select-none">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold to-terracotta flex items-center justify-center text-white shadow-card">
+          {/* Logo — Link to home */}
+          <Link href="/" className="flex items-center gap-2.5 select-none hover:opacity-80 transition-opacity duration-150">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E8C870] to-gold flex items-center justify-center text-white shadow-card">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M4 13h16a8 8 0 0 1-16 0Z" />
                 <circle cx="12" cy="7" r="2.6" />
