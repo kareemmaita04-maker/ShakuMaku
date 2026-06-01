@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ProductCard } from '@/components/products/ProductCard';
 import { PRODUCTS, type Category } from '@/lib/data';
 
 const filters = ['All', 'Hummus & Dips', 'Lebneh', 'Bundles', 'Seed-Oil Free', 'Vegan', 'Spicy', 'Contains Dairy'];
 
-export default function ShopPage() {
+function ShopContent() {
   const searchParams = useSearchParams();
   const initialCat = searchParams.get('cat') ?? 'All';
   const [active, setActive] = useState(initialCat);
@@ -54,5 +54,13 @@ export default function ShopPage() {
         )}
       </div>
     </section>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="py-14 px-5 text-center text-ink-soft">Loading…</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }
