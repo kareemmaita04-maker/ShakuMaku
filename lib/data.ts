@@ -53,7 +53,7 @@ export const CATEGORY_COLORS: Record<Category, [string, string]> = {
 
 export const PRODUCTS: Product[] = [
   {
-    id: 'p1', name: 'Classic Hummus', cat: 'Hummus & Dips', size: '8 oz', price: 7,
+    id: 'p1', name: 'Classic Hummus', cat: 'Hummus & Dips', size: '8 oz', price: 8,
     desc: 'Our signature stone-ground chickpea hummus — silky, lemony and bright.',
     ingredients: 'Chickpeas, tahini, lemon juice, olive oil, sea salt',
     allergens: 'Contains sesame (tahini). Made in a facility that handles dairy.',
@@ -61,7 +61,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Vegan', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p2', name: 'Avocado Hummus', cat: 'Hummus & Dips', size: '8 oz', price: 7,
+    id: 'p2', name: 'Avocado Hummus', cat: 'Hummus & Dips', size: '8 oz', price: 8,
     desc: 'Creamy hummus blended with ripe avocado, cilantro and basil.',
     ingredients: 'Chickpeas, avocado, cilantro, basil, tahini, lemon juice, olive oil, sea salt',
     allergens: 'Contains sesame (tahini).',
@@ -69,7 +69,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Vegan', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p3', name: 'Cilantro Hummus', cat: 'Hummus & Dips', size: '8 oz', price: 7,
+    id: 'p3', name: 'Cilantro Hummus', cat: 'Hummus & Dips', size: '8 oz', price: 8,
     desc: 'A zesty, herb-forward hummus with a jalapeño kick.',
     ingredients: 'Chickpeas, cilantro, jalapeño, tahini, lemon juice, olive oil, sea salt',
     allergens: 'Contains sesame (tahini).',
@@ -77,7 +77,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Vegan', 'Seed-Oil Free', 'Spicy'], hidden: false,
   },
   {
-    id: 'p4', name: "The Mo's Mix", cat: 'Hummus & Dips', size: '8 oz', price: 7,
+    id: 'p4', name: "The Mo's Mix", cat: 'Hummus & Dips', size: '8 oz', price: 8,
     desc: 'Our house garden blend — garlicky, green and packed with herbs.',
     ingredients: 'Chickpeas, garlic, cilantro, basil, spinach, tahini, lemon juice, olive oil, sea salt',
     allergens: 'Contains sesame (tahini).',
@@ -85,7 +85,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Vegan', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p5', name: 'The Cali Dip', cat: 'Hummus & Dips', size: '8 oz', price: 7,
+    id: 'p5', name: 'The Cali Dip', cat: 'Hummus & Dips', size: '8 oz', price: 8,
     desc: 'Sun-dried tomato and basil for a Mediterranean-meets-California vibe.',
     ingredients: 'Chickpeas, garlic, sun-dried tomato, basil, tahini, lemon juice, olive oil, sea salt',
     allergens: 'Contains sesame (tahini).',
@@ -93,7 +93,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Vegan', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p6', name: 'Three Layer Dip', cat: 'Hummus & Dips', size: '8 oz', price: 7,
+    id: 'p6', name: 'Three Layer Dip', cat: 'Hummus & Dips', size: '8 oz', price: 8,
     desc: 'Layers of feta, pesto and sun-dried tomato — a crowd favorite.',
     ingredients: 'Feta cheese, pesto, sun-dried tomato, Italian seasoning, olive oil',
     allergens: 'Contains dairy & nuts (pesto).',
@@ -101,7 +101,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Contains Dairy', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p7', name: 'Lemon Lebneh', cat: 'Lebneh', size: '8 oz', price: 7,
+    id: 'p7', name: 'Lemon Lebneh', cat: 'Lebneh', size: '8 oz', price: 8,
     desc: 'Thick, tangy strained yogurt brightened with fresh lemon.',
     ingredients: 'Pasteurized milk, lemon puree, probiotics',
     allergens: 'Contains dairy.',
@@ -109,7 +109,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Contains Dairy', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p8', name: 'Mango Lebneh', cat: 'Lebneh', size: '8 oz', price: 7,
+    id: 'p8', name: 'Mango Lebneh', cat: 'Lebneh', size: '8 oz', price: 8,
     desc: 'Velvety lebneh swirled with sweet ripe mango.',
     ingredients: 'Pasteurized milk, mango puree, probiotics',
     allergens: 'Contains dairy.',
@@ -117,7 +117,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Contains Dairy', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p9', name: 'Strawberry Lebneh', cat: 'Lebneh', size: '8 oz', price: 7,
+    id: 'p9', name: 'Strawberry Lebneh', cat: 'Lebneh', size: '8 oz', price: 8,
     desc: "Creamy lebneh with real strawberry — breakfast's best friend.",
     ingredients: 'Pasteurized milk, strawberry puree, probiotics',
     allergens: 'Contains dairy.',
@@ -125,7 +125,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Contains Dairy', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p10', name: 'Blueberry Lebneh', cat: 'Lebneh', size: '8 oz', price: 7,
+    id: 'p10', name: 'Blueberry Lebneh', cat: 'Lebneh', size: '8 oz', price: 8,
     desc: 'Lebneh folded with juicy blueberries. Lightly sweet, deeply good.',
     ingredients: 'Pasteurized milk, blueberry puree, probiotics',
     allergens: 'Contains dairy.',
@@ -133,7 +133,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Contains Dairy', 'Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p11', name: 'Pomegranate Lebneh', cat: 'Lebneh', size: '8 oz', price: 7,
+    id: 'p11', name: 'Pomegranate Lebneh', cat: 'Lebneh', size: '8 oz', price: 8,
     desc: 'Tart pomegranate meets silky lebneh — our seasonal star.',
     ingredients: 'Pasteurized milk, pomegranate puree, probiotics',
     allergens: 'Contains dairy.',
@@ -141,7 +141,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Contains Dairy', 'Seed-Oil Free', 'Limited Time'], hidden: false,
   },
   {
-    id: 'p12', name: 'Dip Lovers Bundle', cat: 'Bundles', size: '4 × 8 oz', price: 7,
+    id: 'p12', name: 'Dip Lovers Bundle', cat: 'Bundles', size: '4 × 8 oz', price: 8,
     desc: 'Pick our four best-selling dips at a bundle price. Perfect for sharing.',
     ingredients: 'Includes Classic Hummus, Avocado Hummus, The Cali Dip & Three Layer Dip.',
     allergens: 'Contains sesame & dairy.',
@@ -149,7 +149,7 @@ export const PRODUCTS: Product[] = [
     badges: ['Seed-Oil Free'], hidden: false,
   },
   {
-    id: 'p13', name: 'Lebneh Tasting Set', cat: 'Bundles', size: '4 × 8 oz', price: 7,
+    id: 'p13', name: 'Lebneh Tasting Set', cat: 'Bundles', size: '4 × 8 oz', price: 8,
     desc: 'A flight of four fruit lebnehs — the sweetest way to start the week.',
     ingredients: 'Includes Lemon, Mango, Strawberry & Blueberry Lebneh.',
     allergens: 'Contains dairy.',
