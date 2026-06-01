@@ -18,11 +18,9 @@ export function ProductCard({ p }: { p: Product }) {
   return (
     <>
       <motion.div
-        whileHover={{ y: -5 }}
+        whileHover={{ y: -5, boxShadow: '0 18px 50px -28px rgba(0,0,0,.25)' }}
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
         className="bg-paper border border-line rounded-[18px] overflow-hidden flex flex-col"
-        style={{ boxShadow: 'none' }}
-        whileHover={{ boxShadow: '0 18px 50px -28px rgba(57,39,28,.3)', y: -5 } as any}
       >
         {/* Image */}
         <div
