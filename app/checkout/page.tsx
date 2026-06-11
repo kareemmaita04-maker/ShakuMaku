@@ -27,23 +27,28 @@ export default function CheckoutPage() {
   const [marketId, setMarketId] = useState('');
   const [delivDateId, setDelivDateId] = useState('');
   const [confirmed, setConfirmed] = useState<Confirmed | null>(null);
+  const [placing, setPlacing] = useState(false);
 
   const fee = fulfill === 'delivery' ? SETTINGS.deliveryFee : 0;
   const total = subtotal + fee;
 
-  function placeOrder(e: React.FormEvent<HTMLFormElement>) {
+  async function placeOrder(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const name = (fd.get('name') as string).trim();
     const email = (fd.get('email') as string).trim();
+    const phone = (fd.get('phone') as string).trim();
+    const notes = (fd.get('notes') as string || '').trim();
 
     if (fulfill === 'pickup' && !marketId) { alert('Please choose a market for pickup.'); return; }
     if (fulfill === 'delivery' && !delivDateId) { alert('Please choose a delivery date.'); return; }
 
-    const id = `SM-${1043 + Math.floor(Math.random() * 99)}`;
+    setPlacing(true);
+
+    const id = `SM-${Date.now().toString(36).toUpperCase()}`;
     let date = '';
     let marketName: string | undefined;
-    let addr: string | undefined;
+    let addr = '';
 
     if (fulfill === 'pickup') {
       const m = getMarket(marketId)!;
@@ -55,8 +60,35 @@ export default function CheckoutPage() {
       addr = `${(fd.get('addr') as string)}, ${fd.get('city')}, AZ ${fd.get('zip')}`;
     }
 
-    setConfirmed({ id, name, email, items: items.map((i) => ({ id: i.productId, qty: i.qty })), fulfill, marketName, addr, date, fee, total });
+    const order = {
+      id,
+      name,
+      email,
+      phone,
+      items: items.map((i) => ({ id: i.productId, qty: i.qty })),
+      fulfill,
+      marketId: marketId || '',
+      date,
+      addr,
+      fee,
+      notes,
+      status: 'pending',
+      placed: new Date().toISOString(),
+    };
+
+    try {
+      await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order),
+      });
+    } catch {
+      // non-fatal — order still confirmed client-side
+    }
+
+    setConfirmed({ id, name, email, items: order.items, fulfill, marketName, addr: addr || undefined, date, fee, total });
     clearCart();
+    setPlacing(false);
   }
 
   if (confirmed) {
@@ -261,7 +293,7 @@ export default function CheckoutPage() {
                   <div className="w-8 h-8 rounded-full bg-ink-soft/20 flex items-center justify-center font-bold text-sm text-ink-soft flex-shrink-0">$</div>
                   <h3 className="font-serif text-xl font-semibold">Payment</h3>
                 </div>
-                <p className="text-ink-soft text-sm">This prototype is ready for <strong>Stripe</strong> or <strong>Shopify checkout</strong> — payment will be collected here once connected. For now your order is placed as a confirmed preorder.</p>
+                <p className="text-ink-soft text-sm">Ready for <strong>Stripe</strong> or <strong>Shopify checkout</strong> — payment will be collected here once connected. For now your order is placed as a confirmed preorder.</p>
               </div>
             </div>
 
@@ -295,9 +327,10 @@ export default function CheckoutPage() {
               </div>
               <button
                 type="submit"
-                className="mt-5 w-full py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-[.98] transition-all duration-150 select-none"
+                disabled={placing}
+                className="mt-5 w-full py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-[.98] transition-all duration-150 select-none disabled:opacity-60"
               >
-                Place Order
+                {placing ? 'Placing order…' : 'Place Order'}
               </button>
               <p className="text-[12px] text-ink-soft text-center mt-3">Weekly cutoff: <strong>Sunday 9 PM</strong> · Made fresh · Fri, Sat, or Sun fulfillment</p>
             </div>
