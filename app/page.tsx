@@ -15,8 +15,8 @@ const reviews = [
 const steps = [
   { n: '1', icon: '🛒', title: 'Order Online', desc: 'Browse the shop and add fresh dips, hummus & lebneh to your order.' },
   { n: '2', icon: '📍', title: 'Pick Pickup or Delivery', desc: 'Choose a farmers market pickup or Phoenix-area doorstep delivery.' },
-  { n: '3', icon: '👨‍🍳', title: 'We Make It Fresh', desc: 'Once the weekly cutoff passes, we make exactly what was ordered.' },
-  { n: '4', icon: '🎉', title: 'Enjoy', desc: 'Grab it at the market or have it delivered refrigerated to your door.' },
+  { n: '3', icon: '👨‍🍳', title: 'We Make It Fresh', desc: 'After Sunday\'s cutoff we make exactly what was ordered — nothing sits on a shelf.' },
+  { n: '4', icon: '🎉', title: 'Enjoy', desc: 'Grab it at the market or have it delivered refrigerated on your chosen Friday, Saturday, or Sunday.' },
 ];
 
 export default function HomePage() {
@@ -57,7 +57,7 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="flex gap-7 mt-9 flex-wrap">
-              {[['13+', 'Fresh flavors'], ['5', 'Local markets'], ['$9', 'Flat delivery']].map(([val, lbl]) => (
+              {[['13+', 'Fresh flavors'], ['5', 'Local markets'], ['Sun', 'Weekly cutoff']].map(([val, lbl]) => (
                 <div key={lbl} className="text-sm text-ink-soft">
                   <div className="font-serif text-[25px] text-ink font-semibold leading-none">{val}</div>
                   {lbl}
@@ -117,7 +117,7 @@ export default function HomePage() {
             <h2 className="font-serif text-[clamp(28px,4vw,40px)] font-semibold mb-2">Find Us at Your Local Market</h2>
             <p className="text-ink-soft text-[16.5px] mb-3">Skip the fee and say hi! Preorder online, then grab your fresh order at any of our Arizona farmers markets.</p>
             <ul className="space-y-2 mb-6">
-              {['Free pickup — no delivery charge', 'Reserve before the weekly cutoff', 'Meet the makers and try samples'].map((l) => (
+              {['Free pickup — no delivery charge', 'Order by Sunday 9 PM for that week\'s markets', 'Meet the makers and try samples'].map((l) => (
                 <li key={l} className="flex gap-3 items-start text-[15.5px]">
                   <span className="text-terracotta text-xs mt-1">✦</span> {l}
                 </li>
@@ -142,9 +142,9 @@ export default function HomePage() {
           <div>
             <div className="text-[13px] font-bold tracking-widest uppercase text-gold-dk mb-3">Local Delivery</div>
             <h2 className="font-serif text-[clamp(28px,4vw,40px)] font-semibold mb-2">Doorstep Delivery, Phoenix-Area</h2>
-            <p className="text-ink-soft text-[16.5px] mb-3">Local doorstep delivery for a flat <strong>$9 fee</strong>. Orders are made fresh and delivered refrigerated.</p>
+            <p className="text-ink-soft text-[16.5px] mb-3">Local doorstep delivery for a flat <strong>$9 fee</strong>. Order by <strong>Sunday 9 PM</strong> and choose your delivery day at checkout.</p>
             <ul className="space-y-2 mb-6">
-              {['Flat $9 fee anywhere in our zones', 'Delivered cold & fresh', 'Choose your delivery date at checkout'].map((l) => (
+              {['Order cutoff: every Sunday by 9 PM', 'Delivered cold & fresh on Fri, Sat, or Sun', 'Flat $9 fee anywhere in our delivery zone'].map((l) => (
                 <li key={l} className="flex gap-3 items-start text-[15.5px]">
                   <span className="text-terracotta text-xs mt-1">✦</span> {l}
                 </li>

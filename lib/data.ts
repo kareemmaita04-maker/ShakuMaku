@@ -159,49 +159,63 @@ export const PRODUCTS: Product[] = [
 ];
 
 export const MARKETS: Market[] = [
+  // ── Week 1 · Cutoff: Sunday June 14 by 9 PM ──
   {
     id: 'm1', name: 'Downtown Phoenix Farmers Market',
-    date: '2026-06-06', day: 'Saturday', time: '8:00 AM – 1:00 PM',
+    date: '2026-06-20', day: 'Saturday', time: '8:00 AM – 1:00 PM',
     address: '721 N Central Ave, Phoenix, AZ 85004',
-    cutoff: '2026-05-31T21:00', pickupOn: true, hidden: false,
+    cutoff: '2026-06-14T21:00', pickupOn: true, hidden: false,
   },
   {
     id: 'm2', name: 'Old Town Scottsdale Market',
-    date: '2026-06-07', day: 'Sunday', time: '9:00 AM – 1:00 PM',
+    date: '2026-06-21', day: 'Sunday', time: '9:00 AM – 1:00 PM',
     address: '3806 N Brown Ave, Scottsdale, AZ 85251',
-    cutoff: '2026-06-01T21:00', pickupOn: true, hidden: false,
+    cutoff: '2026-06-14T21:00', pickupOn: true, hidden: false,
   },
+  // ── Week 2 · Cutoff: Sunday June 21 by 9 PM ──
   {
     id: 'm3', name: 'Gilbert Farmers Market',
-    date: '2026-06-13', day: 'Saturday', time: '8:00 AM – 12:00 PM',
+    date: '2026-06-27', day: 'Saturday', time: '8:00 AM – 12:00 PM',
     address: '222 N Ash St, Gilbert, AZ 85234',
-    cutoff: '2026-06-07T21:00', pickupOn: true, hidden: false,
+    cutoff: '2026-06-21T21:00', pickupOn: true, hidden: false,
   },
   {
     id: 'm4', name: 'Uptown Farmers Market',
-    date: '2026-06-14', day: 'Sunday', time: '8:00 AM – 1:00 PM',
+    date: '2026-06-28', day: 'Sunday', time: '8:00 AM – 1:00 PM',
     address: '5757 N Central Ave, Phoenix, AZ 85012',
-    cutoff: '2026-06-08T21:00', pickupOn: true, hidden: false,
+    cutoff: '2026-06-21T21:00', pickupOn: true, hidden: false,
   },
+  // ── Week 3 · Cutoff: Sunday June 28 by 9 PM ──
   {
     id: 'm5', name: 'Tempe Sunday Market',
-    date: '2026-05-25', day: 'Sunday', time: '9:00 AM – 1:00 PM',
+    date: '2026-07-05', day: 'Sunday', time: '9:00 AM – 1:00 PM',
     address: '520 S Mill Ave, Tempe, AZ 85281',
-    cutoff: '2026-05-18T21:00', pickupOn: false, hidden: false,
+    cutoff: '2026-06-28T21:00', pickupOn: true, hidden: false,
   },
 ];
 
+// Each week has three fulfillment options (Fri / Sat / Sun).
+// All share the same Sunday-night cutoff for that week.
 export const DELIVERY_DATES = [
-  { id: 'd1', label: 'Friday, June 5',    date: '2026-06-05', cutoff: '2026-06-03T21:00' },
-  { id: 'd2', label: 'Saturday, June 6',  date: '2026-06-06', cutoff: '2026-06-04T21:00' },
-  { id: 'd3', label: 'Friday, June 12',   date: '2026-06-12', cutoff: '2026-06-10T21:00' },
-  { id: 'd4', label: 'Saturday, June 13', date: '2026-06-13', cutoff: '2026-06-11T21:00' },
+  // ── Week 1 · Cutoff: Sunday June 14 by 9 PM ──
+  { id: 'd1', label: 'Friday, June 19',   date: '2026-06-19', cutoff: '2026-06-14T21:00' },
+  { id: 'd2', label: 'Saturday, June 20', date: '2026-06-20', cutoff: '2026-06-14T21:00' },
+  { id: 'd3', label: 'Sunday, June 21',   date: '2026-06-21', cutoff: '2026-06-14T21:00' },
+  // ── Week 2 · Cutoff: Sunday June 21 by 9 PM ──
+  { id: 'd4', label: 'Friday, June 26',   date: '2026-06-26', cutoff: '2026-06-21T21:00' },
+  { id: 'd5', label: 'Saturday, June 27', date: '2026-06-27', cutoff: '2026-06-21T21:00' },
+  { id: 'd6', label: 'Sunday, June 28',   date: '2026-06-28', cutoff: '2026-06-21T21:00' },
+  // ── Week 3 · Cutoff: Sunday June 28 by 9 PM ──
+  { id: 'd7', label: 'Friday, July 3',    date: '2026-07-03', cutoff: '2026-06-28T21:00' },
+  { id: 'd8', label: 'Saturday, July 4',  date: '2026-07-04', cutoff: '2026-06-28T21:00' },
+  { id: 'd9', label: 'Sunday, July 5',    date: '2026-07-05', cutoff: '2026-06-28T21:00' },
 ];
 
 export const SETTINGS = {
   deliveryFee: 9,
   deliveryZips: '85004, 85006, 85012, 85013, 85014, 85016, 85018, 85251, 85254, 85281',
-  deliveryDays: 'Friday & Saturday',
+  deliveryDays: 'Friday, Saturday & Sunday',
+  orderCutoff: 'Sunday by 9:00 PM',
 };
 
 export function getProd(id: string) {

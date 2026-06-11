@@ -188,7 +188,7 @@ export default function CheckoutPage() {
                 ) : (
                   <div className="space-y-4">
                     <div className="bg-cream-2 rounded-xl px-4 py-3 text-[12.5px] text-ink-soft">
-                      Local doorstep delivery available in select Phoenix-area ZIPs ({SETTINGS.deliveryZips}). Orders delivered refrigerated.
+                      Order by <strong>Sunday 9 PM</strong> for delivery on your chosen Friday, Saturday, or Sunday. Available in select Phoenix-area ZIPs: {SETTINGS.deliveryZips}.
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="sm:col-span-2">
@@ -299,7 +299,7 @@ export default function CheckoutPage() {
               >
                 Place Order
               </button>
-              <p className="text-[12px] text-ink-soft text-center mt-3">Made fresh for this week&apos;s batch · you&apos;ll get a confirmation</p>
+              <p className="text-[12px] text-ink-soft text-center mt-3">Weekly cutoff: <strong>Sunday 9 PM</strong> · Made fresh · Fri, Sat, or Sun fulfillment</p>
             </div>
           </div>
         </form>
