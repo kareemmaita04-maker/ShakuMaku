@@ -8,7 +8,7 @@ export function fmtDate(d: string) {
 }
 
 export function isClosed(cutoffStr: string) {
-  return new Date(cutoffStr) < new Date('2026-05-31T12:00:00');
+  return new Date(cutoffStr) < new Date();
 }
 
 export function fmtCutoff(cutoffStr: string) {
