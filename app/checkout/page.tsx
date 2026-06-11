@@ -32,6 +32,8 @@ export default function CheckoutPage() {
   const fee = fulfill === 'delivery' ? SETTINGS.deliveryFee : 0;
   const total = subtotal + fee;
 
+  const stripeEnabled = process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true';
+
   async function placeOrder(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -76,16 +78,44 @@ export default function CheckoutPage() {
       placed: new Date().toISOString(),
     };
 
+    // Always save the order first
     try {
       await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(order),
       });
-    } catch {
-      // non-fatal — order still confirmed client-side
+    } catch { /* non-fatal */ }
+
+    // Stripe path
+    if (stripeEnabled) {
+      try {
+        const stripeItems = items.map((i) => {
+          const p = getProd(i.productId);
+          return { name: p.name, price: p.price, qty: i.qty };
+        });
+        const res = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: id,
+            items: stripeItems,
+            fee,
+            customerEmail: email,
+            successPath: `/checkout/success?order_id=${id}`,
+            cancelPath: '/checkout',
+          }),
+        });
+        const data = await res.json();
+        if (data.url) {
+          clearCart();
+          window.location.href = data.url;
+          return;
+        }
+      } catch { /* fall through to preorder */ }
     }
 
+    // Preorder fallback (Stripe not enabled or failed)
     setConfirmed({ id, name, email, items: order.items, fulfill, marketName, addr: addr || undefined, date, fee, total });
     clearCart();
     setPlacing(false);
@@ -287,13 +317,29 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Payment placeholder */}
-              <div className="bg-cream-2 border border-dashed border-line rounded-[20px] p-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-ink-soft/20 flex items-center justify-center font-bold text-sm text-ink-soft flex-shrink-0">$</div>
+              {/* Payment */}
+              <div className="bg-paper border border-line rounded-[20px] p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-terracotta text-white flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
                   <h3 className="font-serif text-xl font-semibold">Payment</h3>
                 </div>
-                <p className="text-ink-soft text-sm">Ready for <strong>Stripe</strong> or <strong>Shopify checkout</strong> — payment will be collected here once connected. For now your order is placed as a confirmed preorder.</p>
+                {stripeEnabled ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm text-ink-soft bg-cream-2 rounded-xl px-4 py-3">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      Secure payment powered by Stripe. We never see your card details.
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
+                      {['Visa', 'MC', 'Amex', 'Apple Pay', 'Google Pay'].map((m) => (
+                        <span key={m} className="text-[11px] font-semibold bg-cream-2 text-ink-soft px-2.5 py-1 rounded-lg">{m}</span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+                    <strong>Preorder mode</strong> — Stripe is not yet connected. Orders are confirmed but payment is not collected. Add your Stripe keys in Vercel to enable payments.
+                  </div>
+                )}
               </div>
             </div>
 
@@ -330,7 +376,7 @@ export default function CheckoutPage() {
                 disabled={placing}
                 className="mt-5 w-full py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-[.98] transition-all duration-150 select-none disabled:opacity-60"
               >
-                {placing ? 'Placing order…' : 'Place Order'}
+                {placing ? 'Processing…' : stripeEnabled ? '💳 Pay with Stripe' : 'Place Preorder'}
               </button>
               <p className="text-[12px] text-ink-soft text-center mt-3">Weekly cutoff: <strong>Sunday 9 PM</strong> · Made fresh · Fri, Sat, or Sun fulfillment</p>
             </div>
