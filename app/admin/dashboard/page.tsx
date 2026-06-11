@@ -1,113 +1,155 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PRODUCTS, MARKETS, DELIVERY_DATES, SETTINGS } from '@/lib/data';
+import { PRODUCTS, MARKETS, DELIVERY_DATES } from '@/lib/data';
 
-const now = new Date();
-const activeProducts = PRODUCTS.filter((p) => !p.hidden && !p.badges.includes('Sold Out'));
+const visibleProducts = PRODUCTS.filter((p) => !p.hidden);
 const activeMarkets = MARKETS.filter((m) => !m.hidden && m.pickupOn);
-const openDeliveries = DELIVERY_DATES.filter((d) => new Date(d.cutoff) > now);
-const totalRevenue = activeProducts.length * 8;
+const upcomingDeliveries = DELIVERY_DATES.length;
 
-const quickLinks = [
-  { href: '/admin/dashboard/delivery', label: 'Manage Delivery', sub: `${openDeliveries.length} dates open`, color: 'bg-blue-50 border-blue-100', icon: '🚚' },
-  { href: '/admin/dashboard/markets', label: 'Market Pickup', sub: `${activeMarkets.length} markets active`, color: 'bg-amber-50 border-amber-100', icon: '📍' },
-  { href: '/admin/dashboard/products', label: 'Product Catalog', sub: `${activeProducts.length} active items`, color: 'bg-green-50 border-green-100', icon: '🫙' },
-];
+export default function AdminDashboard() {
+  const router = useRouter();
 
-export default function OverviewPage() {
-  const hour = now.getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  async function handleLogout() {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    router.push('/admin');
+  }
 
   return (
-    <div className="p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="font-serif text-[30px] font-semibold text-ink">{greeting} 👋</h1>
-        <p className="text-ink-soft mt-1">Here&apos;s your weekly snapshot for Shaku Maku.</p>
-      </div>
-
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Active Products', value: activeProducts.length, sub: `${PRODUCTS.length} total SKUs`, icon: '🫙', accent: 'text-gold' },
-          { label: 'Open Markets', value: activeMarkets.length, sub: 'pickup available', icon: '📍', accent: 'text-amber-600' },
-          { label: 'Delivery Dates', value: openDeliveries.length, sub: 'cutoff not yet passed', icon: '🚚', accent: 'text-blue-600' },
-          { label: 'Price Per Item', value: '$8', sub: 'flat rate, all products', icon: '💰', accent: 'text-green-600' },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl border border-[#E4E4E7] p-5 shadow-sm">
-            <div className="text-2xl mb-3">{s.icon}</div>
-            <div className={`font-serif text-[34px] font-bold leading-none ${s.accent}`}>{s.value}</div>
-            <div className="text-sm font-semibold text-ink mt-1">{s.label}</div>
-            <div className="text-xs text-ink-soft mt-0.5">{s.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick access */}
-      <h2 className="text-[13px] font-bold uppercase tracking-widest text-ink-soft mb-3">Quick Access</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {quickLinks.map((q) => (
-          <Link
-            key={q.href}
-            href={q.href}
-            className={`flex items-center gap-4 p-5 rounded-2xl border ${q.color} hover:scale-[1.02] transition-transform duration-150 select-none`}
-          >
-            <span className="text-3xl">{q.icon}</span>
-            <div>
-              <div className="font-semibold text-ink">{q.label}</div>
-              <div className="text-sm text-ink-soft">{q.sub}</div>
-            </div>
-            <svg className="ml-auto text-ink-soft" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 18l6-6-6-6" />
+    <div className="min-h-screen bg-cream-2">
+      {/* Top bar */}
+      <div className="bg-ink text-cream px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#E8C870] to-gold flex items-center justify-center text-white">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M4 13h16a8 8 0 0 1-16 0Z" />
+              <circle cx="12" cy="7" r="2.6" />
             </svg>
+          </div>
+          <div>
+            <div className="font-serif text-[18px] font-bold leading-none">Shaku Maku</div>
+            <div className="text-[10px] uppercase tracking-widest text-gold mt-0.5">Admin Dashboard</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-cream/70 text-sm hover:text-cream transition-colors">
+            ← View Site
           </Link>
-        ))}
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-full border border-cream/30 text-cream/80 text-sm hover:bg-cream/10 transition-colors select-none"
+          >
+            Sign Out
+          </button>
+        </div>
       </div>
 
-      {/* Cutoff timeline */}
-      <h2 className="text-[13px] font-bold uppercase tracking-widest text-ink-soft mb-3">Upcoming Cutoffs</h2>
-      <div className="bg-white rounded-2xl border border-[#E4E4E7] divide-y divide-[#F0F0F1] shadow-sm">
-        {[
-          ...DELIVERY_DATES.map((d) => ({
-            label: `🚚 Delivery — ${d.label}`,
-            cutoff: d.cutoff,
-            type: 'delivery' as const,
-          })),
-          ...MARKETS.map((m) => ({
-            label: `📍 ${m.name}`,
-            cutoff: m.cutoff,
-            type: 'market' as const,
-          })),
-        ]
-          .sort((a, b) => new Date(a.cutoff).getTime() - new Date(b.cutoff).getTime())
-          .map((item, i) => {
-            const cutoffDate = new Date(item.cutoff);
-            const passed = cutoffDate < now;
-            const diffMs = cutoffDate.getTime() - now.getTime();
-            const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-            const diffDays = Math.floor(diffHrs / 24);
-            const timeLeft = passed
-              ? 'Cutoff passed'
-              : diffDays > 0
-              ? `${diffDays}d ${diffHrs % 24}h left`
-              : `${diffHrs}h left`;
+      <div className="max-w-[1100px] mx-auto px-6 py-10">
+        <h1 className="font-serif text-[32px] font-semibold mb-1">Good morning 👋</h1>
+        <p className="text-ink-soft mb-8">Here&apos;s a snapshot of your shop.</p>
 
-            return (
-              <div key={i} className="flex items-center justify-between px-6 py-4">
-                <div>
-                  <div className={`text-sm font-semibold ${passed ? 'text-ink-soft line-through' : 'text-ink'}`}>{item.label}</div>
-                  <div className="text-xs text-ink-soft mt-0.5">
-                    Cutoff: {cutoffDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at{' '}
-                    {cutoffDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-                  </div>
-                </div>
-                <span className={`text-xs font-semibold px-3 py-1.5 rounded-full ${
-                  passed ? 'bg-[#F4F4F5] text-ink-soft' : diffHrs < 24 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700'
-                }`}>
-                  {timeLeft}
-                </span>
-              </div>
-            );
-          })}
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          {[
+            { label: 'Active Products', value: visibleProducts.length, icon: '🫙' },
+            { label: 'Active Markets', value: activeMarkets.length, icon: '📍' },
+            { label: 'Delivery Dates', value: upcomingDeliveries, icon: '🚚' },
+            { label: 'Total SKUs', value: PRODUCTS.length, icon: '📦' },
+          ].map((s) => (
+            <div key={s.label} className="bg-paper border border-line rounded-[18px] p-5">
+              <div className="text-2xl mb-2">{s.icon}</div>
+              <div className="font-serif text-[32px] font-semibold leading-none">{s.value}</div>
+              <div className="text-sm text-ink-soft mt-1">{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Products table */}
+        <div className="bg-paper border border-line rounded-[18px] overflow-hidden mb-6">
+          <div className="px-6 py-4 border-b border-line flex items-center justify-between">
+            <h2 className="font-serif text-xl font-semibold">Products</h2>
+            <span className="text-sm text-ink-soft">{visibleProducts.length} active</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line bg-cream-2 text-ink-soft text-[12px] uppercase tracking-wide">
+                  <th className="text-left px-6 py-3">Name</th>
+                  <th className="text-left px-6 py-3">Category</th>
+                  <th className="text-left px-6 py-3">Size</th>
+                  <th className="text-right px-6 py-3">Price</th>
+                  <th className="text-left px-6 py-3">Badges</th>
+                  <th className="text-center px-6 py-3">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {PRODUCTS.map((p, i) => (
+                  <tr key={p.id} className={`border-b border-line last:border-0 ${i % 2 === 0 ? '' : 'bg-cream-2/40'}`}>
+                    <td className="px-6 py-3.5 font-medium">{p.name}</td>
+                    <td className="px-6 py-3.5 text-ink-soft">{p.cat}</td>
+                    <td className="px-6 py-3.5 text-ink-soft">{p.size}</td>
+                    <td className="px-6 py-3.5 text-right font-semibold">${p.price}</td>
+                    <td className="px-6 py-3.5">
+                      <div className="flex flex-wrap gap-1">
+                        {p.badges.map((b) => (
+                          <span key={b} className="text-[11px] bg-cream-3 text-ink-soft px-2 py-0.5 rounded-full">{b}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-6 py-3.5 text-center">
+                      {p.hidden ? (
+                        <span className="text-[11px] bg-cream-3 text-ink-soft px-2.5 py-1 rounded-full">Hidden</span>
+                      ) : p.badges.includes('Sold Out') ? (
+                        <span className="text-[11px] bg-spicy/10 text-spicy px-2.5 py-1 rounded-full">Sold Out</span>
+                      ) : (
+                        <span className="text-[11px] bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Active</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Markets table */}
+        <div className="bg-paper border border-line rounded-[18px] overflow-hidden">
+          <div className="px-6 py-4 border-b border-line flex items-center justify-between">
+            <h2 className="font-serif text-xl font-semibold">Upcoming Markets</h2>
+            <span className="text-sm text-ink-soft">{activeMarkets.length} with pickup open</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line bg-cream-2 text-ink-soft text-[12px] uppercase tracking-wide">
+                  <th className="text-left px-6 py-3">Market</th>
+                  <th className="text-left px-6 py-3">Date</th>
+                  <th className="text-left px-6 py-3">Time</th>
+                  <th className="text-left px-6 py-3">Cutoff</th>
+                  <th className="text-center px-6 py-3">Pickup</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MARKETS.map((m, i) => (
+                  <tr key={m.id} className={`border-b border-line last:border-0 ${i % 2 === 0 ? '' : 'bg-cream-2/40'}`}>
+                    <td className="px-6 py-3.5 font-medium">{m.name}</td>
+                    <td className="px-6 py-3.5 text-ink-soft">{m.day}, {m.date}</td>
+                    <td className="px-6 py-3.5 text-ink-soft">{m.time}</td>
+                    <td className="px-6 py-3.5 text-ink-soft">{new Date(m.cutoff).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</td>
+                    <td className="px-6 py-3.5 text-center">
+                      {m.pickupOn ? (
+                        <span className="text-[11px] bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Open</span>
+                      ) : (
+                        <span className="text-[11px] bg-cream-3 text-ink-soft px-2.5 py-1 rounded-full">Closed</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
