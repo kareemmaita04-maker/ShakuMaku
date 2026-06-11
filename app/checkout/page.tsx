@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
-import { getProd, getMarket, MARKETS, DELIVERY_DATES, SETTINGS } from '@/lib/data';
+import { getProd, getMarket, MARKETS, SETTINGS } from '@/lib/data';
 import { money, fmtDate, isClosed } from '@/lib/utils';
 
 type Fulfill = 'pickup' | 'delivery';
@@ -25,7 +25,35 @@ export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const [fulfill, setFulfill] = useState<Fulfill>('pickup');
   const [marketId, setMarketId] = useState('');
-  const [delivDateId, setDelivDateId] = useState('');
+  const [delivDate, setDelivDate] = useState(''); // ISO date string e.g. '2026-06-20'
+
+  // ── Dynamically compute the upcoming Sat & Sun delivery options ──
+  function getDeliveryOptions() {
+    const now = new Date();
+    const day = now.getDay(); // 0=Sun … 6=Sat
+    // Days until the next Sunday (always the NEXT one, not today)
+    const daysToSun = day === 0 ? 7 : 7 - day;
+    const cutoff = new Date(now);
+    cutoff.setDate(now.getDate() + daysToSun);
+    cutoff.setHours(21, 0, 0, 0); // 9 PM cutoff
+    // If it's Sunday and still before 9 PM, this week's Sunday works
+    if (day === 0 && now.getHours() < 21) cutoff.setDate(now.getDate());
+
+    const sat = new Date(cutoff); sat.setDate(cutoff.getDate() + 6);
+    const sun = new Date(cutoff); sun.setDate(cutoff.getDate() + 7);
+
+    const fmt = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const iso = (d: Date) => d.toISOString().split('T')[0];
+
+    return {
+      cutoffLabel: cutoff.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) + ' by 9 PM',
+      options: [
+        { id: iso(sat), label: fmt(sat), short: 'Saturday' },
+        { id: iso(sun), label: fmt(sun), short: 'Sunday' },
+      ],
+    };
+  }
+  const deliveryWeek = getDeliveryOptions();
   const [confirmed, setConfirmed] = useState<Confirmed | null>(null);
   const [placing, setPlacing] = useState(false);
 
@@ -43,7 +71,7 @@ export default function CheckoutPage() {
     const notes = (fd.get('notes') as string || '').trim();
 
     if (fulfill === 'pickup' && !marketId) { alert('Please choose a market for pickup.'); return; }
-    if (fulfill === 'delivery' && !delivDateId) { alert('Please choose a delivery date.'); return; }
+    if (fulfill === 'delivery' && !delivDate) { alert('Please choose Saturday or Sunday delivery.'); return; }
 
     setPlacing(true);
 
@@ -57,8 +85,7 @@ export default function CheckoutPage() {
       date = m.date;
       marketName = m.name;
     } else {
-      const d = DELIVERY_DATES.find((x) => x.id === delivDateId)!;
-      date = d.date;
+      date = delivDate;
       addr = `${(fd.get('addr') as string)}, ${fd.get('city')}, AZ ${fd.get('zip')}`;
     }
 
@@ -267,24 +294,27 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[13px] font-semibold text-ink-soft mb-2">Delivery date *</label>
-                      <div className="flex flex-wrap gap-2">
-                        {DELIVERY_DATES.map((d) => {
-                          const closed = isClosed(d.cutoff);
-                          return (
-                            <button
-                              key={d.id}
-                              type="button"
-                              disabled={closed}
-                              onClick={() => !closed && setDelivDateId(d.id)}
-                              className={`px-4 py-2.5 rounded-full border-[1.5px] text-sm font-semibold transition-all duration-150 select-none ${
-                                delivDateId === d.id ? 'bg-terracotta border-terracotta text-white' : 'bg-paper border-line text-ink-soft hover:border-terracotta'
-                              } ${closed ? 'opacity-40 cursor-not-allowed' : 'active:scale-95'}`}
-                            >
-                              {d.label}{closed ? ' (closed)' : ''}
-                            </button>
-                          );
-                        })}
+                      <label className="block text-[13px] font-semibold text-ink-soft mb-2">Choose your delivery day *</label>
+                      <p className="text-[12px] text-ink-soft mb-3">
+                        Order cutoff: <strong>{deliveryWeek.cutoffLabel}</strong>. Your order ships fresh the following week.
+                      </p>
+                      <div className="grid grid-cols-2 gap-3">
+                        {deliveryWeek.options.map((opt) => (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => setDelivDate(opt.id)}
+                            className={`border-2 rounded-2xl p-4 text-center transition-all duration-150 active:scale-[.98] select-none ${
+                              delivDate === opt.id
+                                ? 'border-terracotta bg-terracotta/5'
+                                : 'border-line hover:border-terracotta/50'
+                            }`}
+                          >
+                            <div className="text-2xl mb-1">{opt.short === 'Saturday' ? '🚗' : '☀️'}</div>
+                            <div className="font-bold text-[15px]">{opt.short}</div>
+                            <div className="text-xs text-ink-soft mt-0.5">{opt.label}</div>
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>

@@ -23,7 +23,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-60 bg-cream/86 backdrop-blur-md border-b border-line">
+      <header className="sticky top-0 z-[60] bg-cream/95 backdrop-blur-md border-b border-line">
         <div className="max-w-[1180px] mx-auto px-5 flex items-center justify-between h-[74px]">
           {/* Logo — Link to home */}
           <Link href="/" className="flex items-center gap-2.5 select-none hover:opacity-80 transition-opacity duration-150">
