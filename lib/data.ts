@@ -213,6 +213,7 @@ export const DELIVERY_DATES = [
 
 export const SETTINGS = {
   deliveryFee: 9,
+  minOrder: 3,
   // Maricopa County beta delivery zone
   deliveryZips: [
     // Phoenix

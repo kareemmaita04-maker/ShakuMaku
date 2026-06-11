@@ -9,7 +9,7 @@ import { money, fmtDate, isClosed } from '@/lib/utils';
 type Fulfill = 'pickup' | 'delivery';
 
 export default function CheckoutPage() {
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal, clearCart, itemCount } = useCart();
   const [fulfill, setFulfill] = useState<Fulfill>('pickup');
   const [marketId, setMarketId] = useState('');
   const [delivDate, setDelivDate] = useState('');
@@ -42,6 +42,7 @@ export default function CheckoutPage() {
   }
   const deliveryWeek = getDeliveryOptions();
 
+  const MIN_ORDER = SETTINGS.minOrder;
   const fee = fulfill === 'delivery' ? SETTINGS.deliveryFee : 0;
   const total = subtotal + fee;
 
@@ -56,6 +57,7 @@ export default function CheckoutPage() {
     const phone = (fd.get('phone') as string).trim();
     const notes = (fd.get('notes') as string || '').trim();
 
+    if (itemCount < MIN_ORDER) { alert(`A minimum of ${MIN_ORDER} items is required to check out.`); return; }
     if (fulfill === 'pickup' && !marketId) { alert('Please choose a market for pickup.'); return; }
     if (fulfill === 'delivery' && !delivDate) { alert('Please choose Saturday or Sunday delivery.'); return; }
 
@@ -148,6 +150,30 @@ export default function CheckoutPage() {
           <p className="text-ink-soft mt-2 mb-6">Add some fresh dips before checking out.</p>
           <Link href="/shop" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-95 transition-all duration-150 select-none">
             Browse the Shop
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  if (itemCount < MIN_ORDER) {
+    return (
+      <section className="py-14 px-5">
+        <div className="max-w-[560px] mx-auto text-center bg-paper border border-line rounded-3xl p-12 shadow-card">
+          <div className="text-5xl mb-4">🛒</div>
+          <h2 className="font-serif text-2xl font-semibold">Almost there!</h2>
+          <p className="text-ink-soft mt-2 mb-4">
+            We have a <strong className="text-ink">3-item minimum</strong> per order — you have{' '}
+            <strong className="text-ink">{itemCount}</strong>. Add {MIN_ORDER - itemCount} more to continue.
+          </p>
+          {/* Progress */}
+          <div className="flex gap-2 justify-center mb-6">
+            {Array.from({ length: MIN_ORDER }).map((_, i) => (
+              <div key={i} className={`w-10 h-2 rounded-full ${i < itemCount ? 'bg-terracotta' : 'bg-cream-3'}`} />
+            ))}
+          </div>
+          <Link href="/shop" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-95 transition-all duration-150 select-none">
+            Add More Items
           </Link>
         </div>
       </section>

@@ -3,13 +3,15 @@
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from '@/lib/cart';
-import { getProd } from '@/lib/data';
+import { getProd, SETTINGS, CATEGORY_COLORS } from '@/lib/data';
 import { money } from '@/lib/utils';
 import { BowlSVG } from '@/components/ui/BowlSVG';
-import { CATEGORY_COLORS } from '@/lib/data';
 
 export function CartDrawer() {
   const { items, drawerOpen, closeDrawer, setQty, removeItem, itemCount, subtotal } = useCart();
+  const MIN = SETTINGS.minOrder;
+  const remaining = Math.max(0, MIN - itemCount);
+  const meetsMinimum = itemCount >= MIN;
 
   return (
     <AnimatePresence>
@@ -109,19 +111,44 @@ export function CartDrawer() {
             {items.length > 0 && (
               <div className="px-6 py-5 border-t border-line bg-paper">
                 <div className="flex justify-between text-sm text-ink-soft mb-1.5">
-                  <span>Subtotal ({itemCount} items)</span>
+                  <span>Subtotal ({itemCount} item{itemCount !== 1 ? 's' : ''})</span>
                   <span>{money(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-xs text-ink-soft mb-4">
+                <div className="flex justify-between text-xs text-ink-soft mb-3">
                   <span>Pickup is free · Delivery $9 flat</span>
                 </div>
-                <Link
-                  href="/checkout"
-                  onClick={closeDrawer}
-                  className="flex items-center justify-center w-full px-5 py-3.5 rounded-full bg-terracotta text-white font-semibold text-sm hover:bg-terra-dk active:scale-[.98] transition-all duration-150 select-none"
-                >
-                  Checkout →
-                </Link>
+
+                {/* Minimum order progress */}
+                {!meetsMinimum && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[13px] font-semibold text-amber-800">3-item minimum</span>
+                      <span className="text-[12px] text-amber-700">Add {remaining} more to checkout</span>
+                    </div>
+                    <div className="flex gap-1.5">
+                      {Array.from({ length: MIN }).map((_, i) => (
+                        <div key={i} className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${i < itemCount ? 'bg-terracotta' : 'bg-amber-200'}`} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {meetsMinimum ? (
+                  <Link
+                    href="/checkout"
+                    onClick={closeDrawer}
+                    className="flex items-center justify-center w-full px-5 py-3.5 rounded-full bg-terracotta text-white font-semibold text-sm hover:bg-terra-dk active:scale-[.98] transition-all duration-150 select-none"
+                  >
+                    Checkout →
+                  </Link>
+                ) : (
+                  <button
+                    disabled
+                    className="flex items-center justify-center w-full px-5 py-3.5 rounded-full bg-cream-3 text-ink-soft font-semibold text-sm cursor-not-allowed select-none"
+                  >
+                    Add {remaining} more item{remaining !== 1 ? 's' : ''} to checkout
+                  </button>
+                )}
               </div>
             )}
           </motion.div>
