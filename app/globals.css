@@ -57,6 +57,20 @@ button:active {
   outline: none;
 }
 
+/* ---- Marquee / ticker ---- */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+.ticker-track {
+  display: flex;
+  width: 300%;
+  animation: ticker 22s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
 /* ---- Line clamp utility ---- */
 .line-clamp-1 {
   display: -webkit-box;
