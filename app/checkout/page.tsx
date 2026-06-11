@@ -8,35 +8,22 @@ import { money, fmtDate, isClosed } from '@/lib/utils';
 
 type Fulfill = 'pickup' | 'delivery';
 
-interface Confirmed {
-  id: string;
-  name: string;
-  email: string;
-  items: { id: string; qty: number }[];
-  fulfill: Fulfill;
-  marketName?: string;
-  addr?: string;
-  date: string;
-  fee: number;
-  total: number;
-}
-
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const [fulfill, setFulfill] = useState<Fulfill>('pickup');
   const [marketId, setMarketId] = useState('');
-  const [delivDate, setDelivDate] = useState(''); // ISO date string e.g. '2026-06-20'
+  const [delivDate, setDelivDate] = useState('');
+  const [zipError, setZipError] = useState('');
+  const [placing, setPlacing] = useState(false);
 
-  // ── Dynamically compute the upcoming Sat & Sun delivery options ──
+  // Dynamically compute upcoming Sat & Sun delivery options
   function getDeliveryOptions() {
     const now = new Date();
-    const day = now.getDay(); // 0=Sun … 6=Sat
-    // Days until the next Sunday (always the NEXT one, not today)
+    const day = now.getDay();
     const daysToSun = day === 0 ? 7 : 7 - day;
     const cutoff = new Date(now);
     cutoff.setDate(now.getDate() + daysToSun);
-    cutoff.setHours(21, 0, 0, 0); // 9 PM cutoff
-    // If it's Sunday and still before 9 PM, this week's Sunday works
+    cutoff.setHours(21, 0, 0, 0);
     if (day === 0 && now.getHours() < 21) cutoff.setDate(now.getDate());
 
     const sat = new Date(cutoff); sat.setDate(cutoff.getDate() + 6);
@@ -54,8 +41,6 @@ export default function CheckoutPage() {
     };
   }
   const deliveryWeek = getDeliveryOptions();
-  const [confirmed, setConfirmed] = useState<Confirmed | null>(null);
-  const [placing, setPlacing] = useState(false);
 
   const fee = fulfill === 'delivery' ? SETTINGS.deliveryFee : 0;
   const total = subtotal + fee;
@@ -64,6 +49,7 @@ export default function CheckoutPage() {
 
   async function placeOrder(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setZipError('');
     const fd = new FormData(e.currentTarget);
     const name = (fd.get('name') as string).trim();
     const email = (fd.get('email') as string).trim();
@@ -72,6 +58,15 @@ export default function CheckoutPage() {
 
     if (fulfill === 'pickup' && !marketId) { alert('Please choose a market for pickup.'); return; }
     if (fulfill === 'delivery' && !delivDate) { alert('Please choose Saturday or Sunday delivery.'); return; }
+
+    // Zip code validation — Maricopa County only
+    if (fulfill === 'delivery') {
+      const zip = (fd.get('zip') as string).trim();
+      if (!SETTINGS.deliveryZips.includes(zip)) {
+        setZipError('Sorry — delivery is currently only available in Maricopa County (beta). Your ZIP is outside our delivery zone.');
+        return;
+      }
+    }
 
     setPlacing(true);
 
@@ -97,95 +92,51 @@ export default function CheckoutPage() {
       items: items.map((i) => ({ id: i.productId, qty: i.qty })),
       fulfill,
       marketId: marketId || '',
+      marketName,
       date,
       addr,
       fee,
       notes,
+      total,
       status: 'pending',
       placed: new Date().toISOString(),
     };
 
-    // Always save the order first
+    // Save to sessionStorage so success page can read it after Stripe redirect
     try {
-      await fetch('/api/orders', {
+      sessionStorage.setItem('sm_pending_order', JSON.stringify(order));
+    } catch { /* ignore */ }
+
+    // Redirect to Stripe — payment is required
+    try {
+      const stripeItems = items.map((i) => {
+        const p = getProd(i.productId);
+        return { name: p.name, price: p.price, qty: i.qty };
+      });
+      const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(order),
+        body: JSON.stringify({
+          orderId: id,
+          items: stripeItems,
+          fee,
+          customerEmail: email,
+          successPath: `/checkout/success?order_id=${id}`,
+          cancelPath: '/checkout',
+        }),
       });
-    } catch { /* non-fatal */ }
-
-    // Stripe path
-    if (stripeEnabled) {
-      try {
-        const stripeItems = items.map((i) => {
-          const p = getProd(i.productId);
-          return { name: p.name, price: p.price, qty: i.qty };
-        });
-        const res = await fetch('/api/stripe/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId: id,
-            items: stripeItems,
-            fee,
-            customerEmail: email,
-            successPath: `/checkout/success?order_id=${id}`,
-            cancelPath: '/checkout',
-          }),
-        });
-        const data = await res.json();
-        if (data.url) {
-          clearCart();
-          window.location.href = data.url;
-          return;
-        }
-      } catch { /* fall through to preorder */ }
+      const data = await res.json();
+      if (data.url) {
+        clearCart();
+        window.location.href = data.url;
+        return;
+      }
+      throw new Error(data.error || 'No checkout URL returned');
+    } catch (err) {
+      console.error('Stripe error:', err);
+      alert('Payment could not be started. Please try again or contact us directly.');
+      setPlacing(false);
     }
-
-    // Preorder fallback (Stripe not enabled or failed)
-    setConfirmed({ id, name, email, items: order.items, fulfill, marketName, addr: addr || undefined, date, fee, total });
-    clearCart();
-    setPlacing(false);
-  }
-
-  if (confirmed) {
-    return (
-      <section className="py-14 px-5">
-        <div className="max-w-[560px] mx-auto text-center bg-paper border border-line rounded-3xl p-12 shadow-card">
-          <div className="w-20 h-20 rounded-full bg-olive/12 flex items-center justify-center mx-auto mb-5 text-4xl">✓</div>
-          <h2 className="font-serif text-[28px] font-semibold">Order Confirmed!</h2>
-          <p className="text-ink-soft mt-2 mb-6 text-[15px]">
-            Thanks {confirmed.name.split(' ')[0]}! Your preorder <strong>{confirmed.id}</strong> is in. We&apos;ll make it fresh and send a confirmation to <strong>{confirmed.email}</strong>.
-          </p>
-          <div className="text-left bg-cream-2 rounded-2xl p-5 space-y-2 mb-6 text-sm">
-            {confirmed.items.map((i) => {
-              const p = getProd(i.id);
-              return (
-                <div key={i.id} className="flex justify-between">
-                  <span>{i.qty} × {p.name}</span>
-                  <span>{money(p.price * i.qty)}</span>
-                </div>
-              );
-            })}
-            <div className="flex justify-between pt-2 border-t border-line">
-              <span>{confirmed.fulfill === 'pickup' ? 'Pickup' : 'Delivery'}</span>
-              <span>{confirmed.fee ? money(confirmed.fee) : 'Free'}</span>
-            </div>
-            <div className="flex justify-between font-bold text-base">
-              <span>Total</span>
-              <span>{money(confirmed.total)}</span>
-            </div>
-            <div className="flex justify-between pt-2 border-t border-line text-ink-soft">
-              <span>{confirmed.fulfill === 'pickup' ? 'Pickup at' : 'Deliver to'}</span>
-              <span className="text-right max-w-[55%]">{confirmed.fulfill === 'pickup' ? confirmed.marketName : confirmed.addr} · {fmtDate(confirmed.date)}</span>
-            </div>
-          </div>
-          <Link href="/shop" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-95 transition-all duration-150 select-none">
-            Continue Shopping
-          </Link>
-        </div>
-      </section>
-    );
   }
 
   if (items.length === 0) {
@@ -226,7 +177,7 @@ export default function CheckoutPage() {
                     <button
                       key={val}
                       type="button"
-                      onClick={() => setFulfill(val)}
+                      onClick={() => { setFulfill(val); setZipError(''); }}
                       className={`border-2 rounded-2xl p-4 text-center transition-all duration-150 active:scale-[.98] select-none ${fulfill === val ? 'border-terracotta bg-terracotta/5' : 'border-line hover:border-terracotta/50'}`}
                     >
                       <div className="text-3xl mb-2">{icon}</div>
@@ -276,8 +227,8 @@ export default function CheckoutPage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="bg-cream-2 rounded-xl px-4 py-3 text-[12.5px] text-ink-soft">
-                      Order by <strong>Sunday 9 PM</strong> for delivery on your chosen Friday, Saturday, or Sunday. Available in select Phoenix-area ZIPs: {SETTINGS.deliveryZips}.
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-[12.5px] text-amber-800">
+                      <strong>Maricopa County Beta</strong> — Delivery is currently available throughout Maricopa County (Phoenix, Scottsdale, Tempe, Mesa, Gilbert, Chandler, Glendale, and surrounding cities). Order by <strong>Sunday 9 PM</strong> for that week&apos;s delivery.
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="sm:col-span-2">
@@ -290,7 +241,16 @@ export default function CheckoutPage() {
                       </div>
                       <div>
                         <label className="block text-[13px] font-semibold text-ink-soft mb-1.5">ZIP code *</label>
-                        <input name="zip" required placeholder="85016" className="w-full px-3.5 py-3 rounded-xl border-[1.5px] border-line bg-cream text-ink text-sm focus:border-terracotta focus:ring-2 focus:ring-terracotta/10 outline-none transition-all" />
+                        <input
+                          name="zip"
+                          required
+                          placeholder="85016"
+                          onChange={() => setZipError('')}
+                          className={`w-full px-3.5 py-3 rounded-xl border-[1.5px] bg-cream text-ink text-sm focus:ring-2 outline-none transition-all ${zipError ? 'border-spicy focus:border-spicy focus:ring-spicy/10' : 'border-line focus:border-terracotta focus:ring-terracotta/10'}`}
+                        />
+                        {zipError && (
+                          <p className="text-spicy text-[12px] mt-1.5 leading-snug">{zipError}</p>
+                        )}
                       </div>
                     </div>
                     <div>
@@ -347,7 +307,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Payment */}
+              {/* Step 4 — Payment */}
               <div className="bg-paper border border-line rounded-[20px] p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 rounded-full bg-terracotta text-white flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
@@ -366,8 +326,10 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
-                    <strong>Preorder mode</strong> — Stripe is not yet connected. Orders are confirmed but payment is not collected. Add your Stripe keys in Vercel to enable payments.
+                  <div className="bg-cream-2 border border-line rounded-xl px-4 py-4 text-sm text-ink-soft text-center space-y-1">
+                    <div className="text-2xl mb-2">🔒</div>
+                    <p className="font-semibold text-ink">Payment setup in progress</p>
+                    <p>Orders require payment before confirmation. Stripe integration is being configured — check back soon!</p>
                   </div>
                 )}
               </div>
@@ -401,14 +363,24 @@ export default function CheckoutPage() {
                   <span>{money(total)}</span>
                 </div>
               </div>
-              <button
-                type="submit"
-                disabled={placing}
-                className="mt-5 w-full py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-[.98] transition-all duration-150 select-none disabled:opacity-60"
-              >
-                {placing ? 'Processing…' : stripeEnabled ? '💳 Pay with Stripe' : 'Place Preorder'}
-              </button>
-              <p className="text-[12px] text-ink-soft text-center mt-3">Weekly cutoff: <strong>Sunday 9 PM</strong> · Made fresh · Fri, Sat, or Sun fulfillment</p>
+              {stripeEnabled ? (
+                <button
+                  type="submit"
+                  disabled={placing}
+                  className="mt-5 w-full py-3.5 rounded-full bg-terracotta text-white font-semibold hover:bg-terra-dk active:scale-[.98] transition-all duration-150 select-none disabled:opacity-60"
+                >
+                  {placing ? 'Redirecting to payment…' : '💳 Pay with Stripe'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="mt-5 w-full py-3.5 rounded-full bg-cream-3 text-ink-soft font-semibold cursor-not-allowed select-none"
+                >
+                  🔒 Payment Setup in Progress
+                </button>
+              )}
+              <p className="text-[12px] text-ink-soft text-center mt-3">Weekly cutoff: <strong>Sunday 9 PM</strong> · Made fresh · Sat or Sun fulfillment</p>
             </div>
           </div>
         </form>
