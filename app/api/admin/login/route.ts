@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const USERNAME = 'ShakuMakuMaita';
-const PASSWORD = 'ShakuMaku123!';
+const USERNAME = 'SMK';
+const PASSWORD = 'test';
 
 export async function POST(req: Request) {
   try {
