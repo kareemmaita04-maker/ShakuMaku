@@ -28,7 +28,6 @@ function SuccessContent() {
   const params = useSearchParams();
   const orderId = params.get('order_id') ?? '';
   const [order, setOrder] = useState<PendingOrder | null>(null);
-  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (!orderId) return;
@@ -40,19 +39,18 @@ function SuccessContent() {
         const o: PendingOrder = JSON.parse(raw);
         if (o.id === orderId) {
           setOrder(o);
-          // POST to orders API once
+          // POST to orders API once, then clear so a re-render won't re-post
           fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(o),
           }).finally(() => {
             sessionStorage.removeItem('sm_pending_order');
-            setSaved(true);
           });
         }
       }
     } catch {
-      setSaved(true);
+      // sessionStorage unavailable; order will be handled server-side via webhook
     }
   }, [orderId]);
 

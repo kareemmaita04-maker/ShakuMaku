@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { updateOrderStatus } from '@/lib/store';
 
-export const config = { api: { bodyParser: false } };
-
 export async function POST(req: Request) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -19,8 +17,9 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-  } catch (err: any) {
-    return NextResponse.json({ error: `Webhook signature failed: ${err.message}` }, { status: 400 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: `Webhook signature failed: ${message}` }, { status: 400 });
   }
 
   if (event.type === 'checkout.session.completed') {
