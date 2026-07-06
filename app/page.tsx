@@ -1,9 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ProductCard } from '@/components/products/ProductCard';
-import { PRODUCTS } from '@/lib/data';
-
-const featured = PRODUCTS.filter((p) => ['p1', 'p2', 'p8', 'p9'].includes(p.id));
+import { CuttingBoard } from '@/components/products/CuttingBoard';
 
 const reviews = [
   { text: '"The mango lebneh is unreal. I preorder every single week and pick up at the Downtown market."', name: 'Layla H.', loc: 'Phoenix, AZ', initial: 'L' },
@@ -99,21 +96,21 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── 3. FEATURED PRODUCTS ── */}
+      {/* ── 3. CUTTING BOARD SHOP ── */}
       <section className="py-20 px-5">
-        <div className="max-w-[1180px] mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
-              <div className="text-[12.5px] font-bold tracking-widest uppercase text-gold-dk mb-2">Customer Favorites</div>
-              <h2 className="font-serif text-[clamp(28px,4.4vw,46px)] font-semibold leading-tight">Featured This Week</h2>
+              <div className="text-[12.5px] font-bold tracking-widest uppercase text-gold-dk mb-2">Made Fresh Weekly</div>
+              <h2 className="font-serif text-[clamp(28px,4.4vw,46px)] font-semibold leading-tight">
+                Hover &amp; Add to Your Order
+              </h2>
             </div>
-            <Link href="/shop" className="text-[15px] font-semibold text-terracotta hover:text-terra-dk transition-colors whitespace-nowrap">
-              View all 13 flavors →
+            <Link href="/checkout" className="text-[15px] font-semibold text-terracotta hover:text-terra-dk transition-colors whitespace-nowrap">
+              Go to Checkout →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featured.map((p) => <ProductCard key={p.id} p={p} />)}
-          </div>
+          <CuttingBoard />
         </div>
       </section>
 

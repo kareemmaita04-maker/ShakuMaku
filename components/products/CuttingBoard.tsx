@@ -8,16 +8,20 @@ import { money } from '@/lib/utils';
 
 const ITEMS = PRODUCTS.filter((p) => !p.hidden);
 
-// Wood-grain board background
-const boardBg: React.CSSProperties = {
-  backgroundColor: '#6B3C1E',
+// Realistic maple/walnut cutting board — layered CSS grain
+const wood: React.CSSProperties = {
+  backgroundColor: '#C08040',
   backgroundImage: [
-    // Fine horizontal grain lines
-    'repeating-linear-gradient(180deg, transparent 0px, transparent 18px, rgba(0,0,0,.055) 18px, rgba(0,0,0,.055) 19px)',
-    // Wider subtle streaks
-    'repeating-linear-gradient(182deg, transparent 0px, transparent 60px, rgba(255,255,255,.018) 60px, rgba(255,255,255,.018) 62px)',
-    // Top highlight + bottom shadow
-    'linear-gradient(180deg, rgba(255,255,255,.09) 0%, rgba(255,255,255,.03) 12%, transparent 40%, rgba(0,0,0,.18) 100%)',
+    // Tight primary grain lines (nearly horizontal)
+    'repeating-linear-gradient(94deg, transparent 0px, transparent 2px, rgba(0,0,0,.07) 2px, rgba(0,0,0,.07) 3px, transparent 3px, transparent 7px, rgba(0,0,0,.04) 7px, rgba(0,0,0,.04) 8px)',
+    // Medium grain bands
+    'repeating-linear-gradient(91deg, rgba(190,130,55,.22) 0px, rgba(190,130,55,0) 36px, rgba(90,48,12,.14) 36px, rgba(90,48,12,0) 72px)',
+    // Occasional darker streak
+    'repeating-linear-gradient(93.5deg, transparent 0, transparent 100px, rgba(70,35,8,.11) 100px, rgba(70,35,8,.11) 101px, transparent 101px, transparent 160px)',
+    // Very faint long streaks for depth
+    'repeating-linear-gradient(89deg, transparent 0, transparent 220px, rgba(255,255,255,.04) 220px, rgba(255,255,255,.04) 222px)',
+    // Top-left highlight + bottom-right shadow (light source from upper-left)
+    'linear-gradient(148deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.07) 22%, transparent 50%, rgba(0,0,0,.16) 100%)',
   ].join(', '),
 };
 
@@ -26,22 +30,64 @@ export function CuttingBoard() {
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <div
-      className="relative rounded-[28px] md:rounded-[36px]"
-      style={{
-        boxShadow:
-          '0 32px 80px -16px rgba(0,0,0,.55), 0 6px 20px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12)',
-      }}
-    >
-      {/* Board surface */}
-      <div
-        className="relative rounded-[28px] md:rounded-[36px] overflow-hidden px-6 py-8 sm:px-10 sm:py-12 md:px-14 md:py-14"
-        style={boardBg}
-      >
-        {/* Inset edge shadow */}
-        <div className="pointer-events-none absolute inset-0 rounded-[28px] md:rounded-[36px] shadow-[inset_0_0_0_2px_rgba(0,0,0,.3),inset_0_2px_8px_rgba(0,0,0,.25)]" />
+    // Outer wrapper — leaves room below for the handle
+    <div className="relative" style={{ paddingBottom: 56 }}>
 
-        {/* Products — flex wrap so last row centers naturally */}
+      {/* ── Handle (behind the board, peeks out below) ── */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2"
+        style={{
+          bottom: 0,
+          width: 92,
+          height: 76,
+          borderRadius: '0 0 46px 46px',
+          zIndex: 1,
+          ...wood,
+          // Handle gets its own shadow since it's separate
+          boxShadow: '0 14px 28px rgba(0,0,0,.45)',
+        }}
+      >
+        {/* Hanging hole */}
+        <div
+          className="absolute bottom-4 left-1/2 -translate-x-1/2"
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: '50%',
+            background: 'rgba(0,0,0,.35)',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.12)',
+            border: '1.5px solid rgba(0,0,0,.45)',
+          }}
+        />
+      </div>
+
+      {/* ── Main board surface (above handle) ── */}
+      <div
+        className="relative"
+        style={{
+          borderRadius: 32,
+          zIndex: 10,
+          ...wood,
+          boxShadow: [
+            '0 36px 80px -16px rgba(0,0,0,.6)',
+            '0 8px 24px rgba(0,0,0,.35)',
+            'inset 0 1px 0 rgba(255,255,255,.18)',
+            'inset 0 0 0 2px rgba(0,0,0,.22)',
+          ].join(', '),
+          padding: 'clamp(24px, 4vw, 56px)',
+          paddingBottom: 'clamp(28px, 4vw, 60px)',
+        }}
+      >
+        {/* Inner routed groove (realistic edge detail) */}
+        <div
+          className="pointer-events-none absolute inset-[10px]"
+          style={{
+            borderRadius: 22,
+            boxShadow: 'inset 0 0 0 1.5px rgba(0,0,0,.18), inset 0 2px 6px rgba(0,0,0,.12)',
+          }}
+        />
+
+        {/* Products — flex-wrap so last row auto-centers */}
         <div className="flex flex-wrap justify-center gap-5 sm:gap-7 md:gap-9">
           {ITEMS.map((p) => (
             <BoardItem
@@ -79,31 +125,38 @@ function BoardItem({
     <div
       className="flex flex-col items-center gap-2 select-none"
       style={{
-        width: 'clamp(110px, 22vw, 158px)',
+        width: 'clamp(108px, 20vw, 154px)',
         cursor: isSoldOut ? 'default' : 'pointer',
       }}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onClick={isSoldOut ? undefined : onAdd}
     >
-      {/* Bowl / photo placeholder */}
+      {/* Bowl / future photo — round, sits on the wood */}
       <div
         className="relative w-full rounded-full overflow-hidden"
         style={{
           aspectRatio: '1',
-          transition: 'transform 220ms ease-out, filter 220ms ease-out',
-          transform: isHovered ? 'scale(1.12) translateY(-6px)' : 'scale(1) translateY(0)',
+          transition: 'transform 200ms ease-out, filter 200ms ease-out',
+          transform: isHovered
+            ? 'scale(1.13) translateY(-7px)'
+            : 'scale(1) translateY(0)',
+          // Drop shadow simulates object sitting on a surface
           filter: isHovered
-            ? 'drop-shadow(0 20px 28px rgba(0,0,0,.6))'
-            : 'drop-shadow(0 7px 14px rgba(0,0,0,.45))',
+            ? 'drop-shadow(0 22px 28px rgba(0,0,0,.62))'
+            : 'drop-shadow(0 8px 16px rgba(0,0,0,.50))',
         }}
       >
-        {/* Photo slot — swap BowlSVG for <img> once real photos are ready */}
+        {/*
+          Photo slot — replace <BowlSVG> with:
+            <img src="/images/hummus/p1.png" alt={p.name} className="w-full h-full object-contain" />
+          once your transparent-background PNGs are ready.
+        */}
         <BowlSVG c1={c1} c2={c2} id={`board-${p.id}`} />
 
         {/* Hover overlay */}
         {isHovered && !isSoldOut && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/42">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
             <span className="bg-terracotta text-white text-[13px] font-bold px-4 py-2 rounded-full shadow-lg pointer-events-none">
               + Add
             </span>
@@ -112,27 +165,29 @@ function BoardItem({
 
         {isSoldOut && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-            <span className="text-white text-[12px] font-bold">Sold Out</span>
+            <span className="text-white text-[12px] font-bold tracking-wide">Sold Out</span>
           </div>
         )}
       </div>
 
-      {/* Label */}
-      <div className="text-center leading-tight">
+      {/* Label — cream text on wood */}
+      <div className="text-center leading-tight px-1">
         <p
           className="font-semibold text-[12.5px] sm:text-[13.5px] leading-snug"
           style={{
-            color: isHovered ? '#FFFCF5' : '#EDE0C4',
+            color: isHovered ? '#FFFCF5' : '#F0E0C0',
             transition: 'color 150ms',
+            textShadow: '0 1px 3px rgba(0,0,0,.5)',
           }}
         >
           {p.name}
         </p>
         <p
-          className="text-[11px] sm:text-[12px] mt-0.5 font-medium"
+          className="text-[11px] sm:text-[12px] mt-0.5 font-semibold"
           style={{
-            color: isHovered ? '#F2DC90' : '#B89B5E',
+            color: isHovered ? '#F8DC80' : '#D4A850',
             transition: 'color 150ms',
+            textShadow: '0 1px 2px rgba(0,0,0,.4)',
           }}
         >
           {money(p.price)}
