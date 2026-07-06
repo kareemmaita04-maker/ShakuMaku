@@ -8,21 +8,12 @@ import { money } from '@/lib/utils';
 
 const ITEMS = PRODUCTS.filter((p) => !p.hidden);
 
-// Realistic maple/walnut cutting board — layered CSS grain
+// Real cutting board photo as background
 const wood: React.CSSProperties = {
-  backgroundColor: '#C08040',
-  backgroundImage: [
-    // Tight primary grain lines (nearly horizontal)
-    'repeating-linear-gradient(94deg, transparent 0px, transparent 2px, rgba(0,0,0,.07) 2px, rgba(0,0,0,.07) 3px, transparent 3px, transparent 7px, rgba(0,0,0,.04) 7px, rgba(0,0,0,.04) 8px)',
-    // Medium grain bands
-    'repeating-linear-gradient(91deg, rgba(190,130,55,.22) 0px, rgba(190,130,55,0) 36px, rgba(90,48,12,.14) 36px, rgba(90,48,12,0) 72px)',
-    // Occasional darker streak
-    'repeating-linear-gradient(93.5deg, transparent 0, transparent 100px, rgba(70,35,8,.11) 100px, rgba(70,35,8,.11) 101px, transparent 101px, transparent 160px)',
-    // Very faint long streaks for depth
-    'repeating-linear-gradient(89deg, transparent 0, transparent 220px, rgba(255,255,255,.04) 220px, rgba(255,255,255,.04) 222px)',
-    // Top-left highlight + bottom-right shadow (light source from upper-left)
-    'linear-gradient(148deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.07) 22%, transparent 50%, rgba(0,0,0,.16) 100%)',
-  ].join(', '),
+  backgroundColor: '#8B5E30',
+  backgroundImage: 'url(/cutting-board.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
 };
 
 export function CuttingBoard() {
@@ -42,8 +33,10 @@ export function CuttingBoard() {
           height: 76,
           borderRadius: '0 0 46px 46px',
           zIndex: 1,
-          ...wood,
-          // Handle gets its own shadow since it's separate
+          backgroundColor: '#8B5E30',
+          backgroundImage: 'url(/cutting-board.png)',
+          backgroundSize: '900px auto',
+          backgroundPosition: 'center bottom',
           boxShadow: '0 14px 28px rgba(0,0,0,.45)',
         }}
       >
