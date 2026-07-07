@@ -9,20 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream:       '#F5F5F5',   // page background — clean light gray
-        'cream-2':   '#EEEEEE',   // slightly darker section bg
-        'cream-3':   '#E3E3E3',   // hover / slightly darker still
-        terracotta:  '#C9963F',   // PRIMARY ACCENT — gold (replaces terracotta)
-        'terra-dk':  '#A87A2B',   // darker gold
-        olive:       '#1A1A1A',   // near-black (dark section backgrounds)
-        'olive-dk':  '#0A0A0A',   // black
-        gold:        '#C9963F',   // gold accent (same as terracotta — unified)
-        'gold-dk':   '#A87A2B',   // darker gold
-        ink:         '#0A0A0A',   // body text — pure black
-        'ink-soft':  '#6B6B6B',   // secondary text — neutral gray
-        line:        '#DCDCDC',   // borders — light gray
-        paper:       '#FFFFFF',   // card backgrounds — pure white
-        spicy:       '#C0432B',   // error / warning states
+        cream:       '#FAF7F2',   // warm linen — page background
+        'cream-2':   '#F2EDE5',   // slightly deeper warm bg
+        'cream-3':   '#E8DED3',   // hover / input states
+        terracotta:  '#C8603A',   // true terracotta — warm red-orange
+        'terra-dk':  '#A84D2C',   // deeper terracotta
+        olive:       '#3D4A2D',   // olive green — badges / accents
+        'olive-dk':  '#2A3320',   // deeper olive
+        gold:        '#C9963F',   // warm gold accent
+        'gold-dk':   '#A87A2B',   // deeper gold
+        ink:         '#1C1008',   // warm espresso — body text
+        'ink-soft':  '#7C6B5E',   // warm brown-gray — secondary text
+        line:        '#E5D9CE',   // warm linen border
+        paper:       '#FFFCF7',   // warm white — card backgrounds
+        spicy:       '#C0432B',   // spicy / error indicator
       },
       fontFamily: {
         sans:  ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],

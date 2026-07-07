@@ -32,7 +32,7 @@ html {
   outline: none;
 }
 *:focus-visible {
-  outline: 2px solid #C9963F;
+  outline: 2px solid #C8603A;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -42,14 +42,14 @@ html {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5F5F5;
+  background: #FAF7F2;
 }
 ::-webkit-scrollbar-thumb {
-  background: #DCDCDC;
+  background: #E5D9CE;
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C9963F;
+  background: #C8603A;
 }
 
 /* ---- Prevent text selection flash on button clicks ---- */
