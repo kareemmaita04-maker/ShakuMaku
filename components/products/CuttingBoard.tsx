@@ -8,15 +8,31 @@ import { money } from '@/lib/utils';
 
 const ITEMS = PRODUCTS.filter((p) => !p.hidden);
 
+const WOOD_SURFACE: React.CSSProperties = {
+  background: [
+    'linear-gradient(170deg, #C8894A 0%, #A0622E 30%, #8B5226 55%, #9E6535 75%, #B8773D 100%)',
+  ].join(', '),
+  boxShadow: [
+    '0 36px 80px -16px rgba(0,0,0,.65)',
+    '0 8px 24px rgba(0,0,0,.4)',
+    'inset 0 1px 0 rgba(255,255,255,.12)',
+    'inset 0 0 0 2px rgba(0,0,0,.18)',
+  ].join(', '),
+};
+
+const WOOD_HANDLE: React.CSSProperties = {
+  background: 'linear-gradient(180deg, #9E6535 0%, #7A4E22 100%)',
+  boxShadow: '0 14px 28px rgba(0,0,0,.55)',
+};
+
 export function CuttingBoard() {
   const { addItem } = useCart();
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    // Outer wrapper — leaves room below for the handle
     <div className="relative" style={{ paddingBottom: 56 }}>
 
-      {/* ── Handle (behind the board, peeks out below) ── */}
+      {/* ── Handle ── */}
       <div
         className="absolute left-1/2 -translate-x-1/2"
         style={{
@@ -25,55 +41,53 @@ export function CuttingBoard() {
           height: 76,
           borderRadius: '0 0 46px 46px',
           zIndex: 1,
-          backgroundColor: '#7A5228',
-          boxShadow: '0 14px 28px rgba(0,0,0,.55)',
+          ...WOOD_HANDLE,
         }}
       >
-        {/* Hanging hole */}
         <div
           className="absolute bottom-4 left-1/2 -translate-x-1/2"
           style={{
             width: 20,
             height: 20,
             borderRadius: '50%',
-            background: 'rgba(0,0,0,.45)',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,.7)',
+            background: 'rgba(0,0,0,.5)',
+            boxShadow: 'inset 0 2px 5px rgba(0,0,0,.8)',
             border: '1.5px solid rgba(0,0,0,.5)',
           }}
         />
       </div>
 
-      {/* ── Main board surface (above handle) ── */}
+      {/* ── Board surface ── */}
       <div
-        className="relative overflow-hidden"
-        style={{
-          borderRadius: 32,
-          zIndex: 10,
-          backgroundColor: '#8B5E30',
-          boxShadow: [
-            '0 36px 80px -16px rgba(0,0,0,.6)',
-            '0 8px 24px rgba(0,0,0,.35)',
-          ].join(', '),
-        }}
+        className="relative"
+        style={{ borderRadius: 32, zIndex: 10, ...WOOD_SURFACE }}
       >
-        {/* Photo — multiply blend removes the white background from the photo */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/cutting-board.png"
-          alt=""
-          aria-hidden="true"
+        {/* Subtle wood-grain streaks */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ borderRadius: 32 }}>
+          {[12, 28, 45, 60, 74].map((pct) => (
+            <div
+              key={pct}
+              style={{
+                position: 'absolute',
+                top: 0, bottom: 0,
+                left: `${pct}%`,
+                width: '1px',
+                background: 'rgba(0,0,0,.07)',
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Inner routed groove */}
+        <div
+          className="pointer-events-none absolute inset-[10px]"
           style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            mixBlendMode: 'multiply',
-            pointerEvents: 'none',
+            borderRadius: 22,
+            boxShadow: 'inset 0 0 0 1.5px rgba(0,0,0,.2), inset 0 2px 6px rgba(0,0,0,.15)',
           }}
         />
 
-        {/* Content sits above the photo */}
+        {/* Products */}
         <div
           style={{
             position: 'relative',
@@ -82,16 +96,6 @@ export function CuttingBoard() {
             paddingBottom: 'clamp(28px, 4vw, 60px)',
           }}
         >
-          {/* Inner routed groove */}
-          <div
-            className="pointer-events-none absolute inset-[10px]"
-            style={{
-              borderRadius: 22,
-              boxShadow: 'inset 0 0 0 1.5px rgba(0,0,0,.18), inset 0 2px 6px rgba(0,0,0,.12)',
-            }}
-          />
-
-          {/* Products — flex-wrap so last row auto-centers */}
           <div className="flex flex-wrap justify-center gap-5 sm:gap-7 md:gap-9">
             {ITEMS.map((p) => (
               <BoardItem
