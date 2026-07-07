@@ -31,8 +31,7 @@ export function BowlSVG({ c1, c2, id, className }: BowlSVGProps) {
         <circle cx="300" cy="250" r="3" />
         <circle cx="170" cy="30" r="2" />
       </g>
-      <ellipse cx="200" cy="172" rx="118" ry="92" fill="#FFFCF5" opacity="0.96" />
-      <ellipse cx="200" cy="166" rx="95" ry="72" fill={c2} opacity="0.92" />
+      <ellipse cx="200" cy="166" rx="118" ry="92" fill={c2} opacity="0.92" />
       <ellipse cx="180" cy="148" rx="44" ry="30" fill="#FFFCF5" opacity="0.32" />
       <g opacity="0.55">
         <circle cx="220" cy="180" r="5" fill="#FFFCF5" />
