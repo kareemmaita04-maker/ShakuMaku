@@ -22,18 +22,9 @@ export function BowlSVG({ c1, c2, id, className }: BowlSVGProps) {
         </radialGradient>
       </defs>
       <rect width="400" height="300" fill={`url(#${gid})`} />
-      <g opacity="0.14" fill="#39271c">
-        <circle cx="60" cy="50" r="3" />
-        <circle cx="120" cy="90" r="2" />
-        <circle cx="330" cy="40" r="2.5" />
-        <circle cx="360" cy="120" r="2" />
-        <circle cx="40" cy="220" r="2" />
-        <circle cx="300" cy="250" r="3" />
-        <circle cx="170" cy="30" r="2" />
-      </g>
-      <ellipse cx="200" cy="166" rx="118" ry="92" fill={c2} opacity="0.92" />
-      <ellipse cx="180" cy="148" rx="44" ry="30" fill="#FFFCF5" opacity="0.32" />
-      <g opacity="0.55">
+      {/* Sheen highlight — no separate inner ellipse, so no ring */}
+      <ellipse cx="160" cy="110" rx="70" ry="48" fill="#FFFCF5" opacity="0.18" />
+      <g opacity="0.45">
         <circle cx="220" cy="180" r="5" fill="#FFFCF5" />
         <circle cx="170" cy="190" r="4" fill="#FFFCF5" />
         <circle cx="240" cy="155" r="3.5" fill="#FFFCF5" />
