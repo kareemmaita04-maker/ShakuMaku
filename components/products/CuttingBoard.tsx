@@ -8,14 +8,6 @@ import { money } from '@/lib/utils';
 
 const ITEMS = PRODUCTS.filter((p) => !p.hidden);
 
-// Real cutting board photo as background
-const wood: React.CSSProperties = {
-  backgroundColor: '#8B5E30',
-  backgroundImage: 'url(/cutting-board.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-};
-
 export function CuttingBoard() {
   const { addItem } = useCart();
   const [hovered, setHovered] = useState<string | null>(null);
@@ -33,11 +25,8 @@ export function CuttingBoard() {
           height: 76,
           borderRadius: '0 0 46px 46px',
           zIndex: 1,
-          backgroundColor: '#8B5E30',
-          backgroundImage: 'url(/cutting-board.png)',
-          backgroundSize: '900px auto',
-          backgroundPosition: 'center bottom',
-          boxShadow: '0 14px 28px rgba(0,0,0,.45)',
+          backgroundColor: '#7A5228',
+          boxShadow: '0 14px 28px rgba(0,0,0,.55)',
         }}
       >
         {/* Hanging hole */}
@@ -47,51 +36,74 @@ export function CuttingBoard() {
             width: 20,
             height: 20,
             borderRadius: '50%',
-            background: 'rgba(0,0,0,.35)',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.12)',
-            border: '1.5px solid rgba(0,0,0,.45)',
+            background: 'rgba(0,0,0,.45)',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,.7)',
+            border: '1.5px solid rgba(0,0,0,.5)',
           }}
         />
       </div>
 
       {/* ── Main board surface (above handle) ── */}
       <div
-        className="relative"
+        className="relative overflow-hidden"
         style={{
           borderRadius: 32,
           zIndex: 10,
-          ...wood,
+          backgroundColor: '#8B5E30',
           boxShadow: [
             '0 36px 80px -16px rgba(0,0,0,.6)',
             '0 8px 24px rgba(0,0,0,.35)',
-            'inset 0 1px 0 rgba(255,255,255,.18)',
-            'inset 0 0 0 2px rgba(0,0,0,.22)',
           ].join(', '),
-          padding: 'clamp(24px, 4vw, 56px)',
-          paddingBottom: 'clamp(28px, 4vw, 60px)',
         }}
       >
-        {/* Inner routed groove (realistic edge detail) */}
-        <div
-          className="pointer-events-none absolute inset-[10px]"
+        {/* Photo — multiply blend removes the white background from the photo */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/cutting-board.png"
+          alt=""
+          aria-hidden="true"
           style={{
-            borderRadius: 22,
-            boxShadow: 'inset 0 0 0 1.5px rgba(0,0,0,.18), inset 0 2px 6px rgba(0,0,0,.12)',
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            mixBlendMode: 'multiply',
+            pointerEvents: 'none',
           }}
         />
 
-        {/* Products — flex-wrap so last row auto-centers */}
-        <div className="flex flex-wrap justify-center gap-5 sm:gap-7 md:gap-9">
-          {ITEMS.map((p) => (
-            <BoardItem
-              key={p.id}
-              p={p}
-              isHovered={hovered === p.id}
-              onEnter={() => setHovered(p.id)}
-              onLeave={() => setHovered(null)}
-              onAdd={() => addItem(p.id)}
-            />
-          ))}
+        {/* Content sits above the photo */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            padding: 'clamp(24px, 4vw, 56px)',
+            paddingBottom: 'clamp(28px, 4vw, 60px)',
+          }}
+        >
+          {/* Inner routed groove */}
+          <div
+            className="pointer-events-none absolute inset-[10px]"
+            style={{
+              borderRadius: 22,
+              boxShadow: 'inset 0 0 0 1.5px rgba(0,0,0,.18), inset 0 2px 6px rgba(0,0,0,.12)',
+            }}
+          />
+
+          {/* Products — flex-wrap so last row auto-centers */}
+          <div className="flex flex-wrap justify-center gap-5 sm:gap-7 md:gap-9">
+            {ITEMS.map((p) => (
+              <BoardItem
+                key={p.id}
+                p={p}
+                isHovered={hovered === p.id}
+                onEnter={() => setHovered(p.id)}
+                onLeave={() => setHovered(null)}
+                onAdd={() => addItem(p.id)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
