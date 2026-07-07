@@ -13,25 +13,52 @@ export function CuttingBoard() {
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <div
-      style={{
-        background: 'linear-gradient(160deg, #C8864A 0%, #9E6030 40%, #8B5226 70%, #A06835 100%)',
-        borderRadius: 24,
-        padding: 'clamp(20px, 4vw, 48px)',
-        boxShadow: '0 20px 60px rgba(0,0,0,.5)',
-      }}
-    >
-      <div className="flex flex-wrap justify-center gap-5 sm:gap-7 md:gap-8">
-        {ITEMS.map((p) => (
-          <BoardItem
-            key={p.id}
-            p={p}
-            isHovered={hovered === p.id}
-            onEnter={() => setHovered(p.id)}
-            onLeave={() => setHovered(null)}
-            onAdd={() => addItem(p.id)}
-          />
-        ))}
+    /* drop-shadow on outer wrapper gives natural floating depth without a border */
+    <div style={{ filter: 'drop-shadow(0 28px 56px rgba(0,0,0,0.75))' }}>
+      <div
+        style={{
+          borderRadius: 28,
+          overflow: 'hidden',
+          /* layered gradients = wood grain illusion */
+          background: `
+            repeating-linear-gradient(
+              -7deg,
+              transparent 0px, transparent 12px,
+              rgba(0,0,0,0.035) 12px, rgba(0,0,0,0.035) 14px,
+              transparent 14px, transparent 28px
+            ),
+            repeating-linear-gradient(
+              -7deg,
+              transparent 0px, transparent 42px,
+              rgba(255,255,255,0.045) 42px, rgba(255,255,255,0.045) 44px,
+              transparent 44px, transparent 86px
+            ),
+            linear-gradient(
+              162deg,
+              #D4904E 0%,
+              #B87540 15%,
+              #9C6230 32%,
+              #8B5226 50%,
+              #956030 65%,
+              #B07840 82%,
+              #C48A4A 100%
+            )
+          `,
+          padding: 'clamp(20px, 4vw, 48px)',
+        }}
+      >
+        <div className="flex flex-wrap justify-center gap-5 sm:gap-7 md:gap-8">
+          {ITEMS.map((p) => (
+            <BoardItem
+              key={p.id}
+              p={p}
+              isHovered={hovered === p.id}
+              onEnter={() => setHovered(p.id)}
+              onLeave={() => setHovered(null)}
+              onAdd={() => addItem(p.id)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -95,19 +122,13 @@ function BoardItem({
       <div className="text-center px-1">
         <p
           className="font-semibold text-[12px] sm:text-[13px] leading-snug"
-          style={{
-            color: '#F0E0C0',
-            textShadow: '0 1px 3px rgba(0,0,0,.6)',
-          }}
+          style={{ color: '#F0E0C0', textShadow: '0 1px 3px rgba(0,0,0,.6)' }}
         >
           {p.name}
         </p>
         <p
           className="text-[11px] sm:text-[12px] mt-0.5 font-semibold"
-          style={{
-            color: '#E8C870',
-            textShadow: '0 1px 2px rgba(0,0,0,.4)',
-          }}
+          style={{ color: '#E8C870', textShadow: '0 1px 2px rgba(0,0,0,.4)' }}
         >
           {money(p.price)}
         </p>
