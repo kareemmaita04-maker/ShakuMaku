@@ -57,7 +57,7 @@ export default function HomePage() {
             <br />Made Fresh,
             <br /><em className="not-italic text-gold">Every Single Week.</em>
           </h1>
-          <p className="text-cream/72 text-[18px] mt-5 mb-8 max-w-[500px] leading-relaxed">
+          <p className="text-cream/90 text-[18px] mt-5 mb-8 max-w-[500px] leading-relaxed">
             Order online for farmers market pickup or Maricopa County doorstep delivery. Made to order — never sitting on a shelf.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -80,7 +80,7 @@ export default function HomePage() {
             {[['13+', 'Fresh flavors'], ['5', 'AZ Markets'], ['$8', 'Per jar, flat']].map(([val, lbl]) => (
               <div key={lbl}>
                 <div className="font-serif text-[30px] text-gold font-semibold leading-none">{val}</div>
-                <div className="text-cream/60 text-[13px] mt-1">{lbl}</div>
+                <div className="text-cream/80 text-[13px] mt-1">{lbl}</div>
               </div>
             ))}
           </div>
@@ -97,12 +97,12 @@ export default function HomePage() {
       </div>
 
       {/* ── 3. CUTTING BOARD SHOP ── */}
-      <section className="py-20 px-5">
+      <section className="py-20 px-5 bg-ink">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
-              <div className="text-[12.5px] font-bold tracking-widest uppercase text-gold-dk mb-2">Made Fresh Weekly</div>
-              <h2 className="font-serif text-[clamp(28px,4.4vw,46px)] font-semibold leading-tight">
+              <div className="text-[12.5px] font-bold tracking-widest uppercase text-gold mb-2">Made Fresh Weekly</div>
+              <h2 className="font-serif text-[clamp(28px,4.4vw,46px)] font-semibold leading-tight text-cream">
                 Hover &amp; Add to Your Order
               </h2>
             </div>
