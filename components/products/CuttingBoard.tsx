@@ -6,48 +6,44 @@ import { BowlSVG } from '@/components/ui/BowlSVG';
 import { useCart } from '@/lib/cart';
 import { money } from '@/lib/utils';
 
-const ITEMS = PRODUCTS.filter((p) => !p.hidden);
+// Only show the hummus & dip flavors on the board
+const ITEMS = PRODUCTS.filter((p) => p.cat === 'Hummus & Dips' && !p.hidden);
 
 export function CuttingBoard() {
   const { addItem } = useCart();
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    /* drop-shadow on outer wrapper gives natural floating depth without a border */
-    <div style={{ filter: 'drop-shadow(0 28px 56px rgba(0,0,0,0.75))' }}>
+    <div style={{ filter: 'drop-shadow(0 32px 64px rgba(0,0,0,0.8))' }}>
       <div
         style={{
-          borderRadius: 28,
+          borderRadius: 20,
           overflow: 'hidden',
-          /* layered gradients = wood grain illusion */
-          background: `
+          backgroundImage: `
             repeating-linear-gradient(
-              -7deg,
-              transparent 0px, transparent 12px,
-              rgba(0,0,0,0.035) 12px, rgba(0,0,0,0.035) 14px,
-              transparent 14px, transparent 28px
+              108deg,
+              transparent 0px, transparent 3px,
+              rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px,
+              transparent 4px, transparent 9px,
+              rgba(0,0,0,0.04) 9px, rgba(0,0,0,0.04) 10px,
+              transparent 10px, transparent 18px,
+              rgba(0,0,0,0.06) 18px, rgba(0,0,0,0.06) 20px,
+              transparent 20px, transparent 32px
             ),
             repeating-linear-gradient(
-              -7deg,
-              transparent 0px, transparent 42px,
-              rgba(255,255,255,0.045) 42px, rgba(255,255,255,0.045) 44px,
-              transparent 44px, transparent 86px
+              108deg,
+              transparent 0px, transparent 20px,
+              rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 22px,
+              transparent 22px, transparent 48px,
+              rgba(255,255,255,0.03) 48px, rgba(255,255,255,0.03) 49px,
+              transparent 49px, transparent 70px
             ),
-            linear-gradient(
-              162deg,
-              #D4904E 0%,
-              #B87540 15%,
-              #9C6230 32%,
-              #8B5226 50%,
-              #956030 65%,
-              #B07840 82%,
-              #C48A4A 100%
-            )
+            linear-gradient(160deg, #C8864A 0%, #A86530 28%, #8B5226 52%, #9A6332 72%, #BE7D40 100%)
           `,
-          padding: 'clamp(20px, 4vw, 48px)',
+          padding: 'clamp(28px, 5vw, 64px)',
         }}
       >
-        <div className="flex flex-wrap justify-center gap-5 sm:gap-7 md:gap-8">
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10">
           {ITEMS.map((p) => (
             <BoardItem
               key={p.id}
@@ -84,7 +80,7 @@ function BoardItem({
     <div
       className="flex flex-col items-center gap-2 select-none"
       style={{
-        width: 'clamp(100px, 18vw, 140px)',
+        width: 'clamp(110px, 20vw, 150px)',
         cursor: isSoldOut ? 'default' : 'pointer',
       }}
       onMouseEnter={onEnter}
@@ -96,10 +92,10 @@ function BoardItem({
         style={{
           aspectRatio: '1',
           transition: 'transform 180ms ease-out, filter 180ms ease-out',
-          transform: isHovered ? 'scale(1.12) translateY(-6px)' : 'scale(1) translateY(0)',
+          transform: isHovered ? 'scale(1.12) translateY(-8px)' : 'scale(1) translateY(0)',
           filter: isHovered
-            ? 'drop-shadow(0 18px 24px rgba(0,0,0,.6))'
-            : 'drop-shadow(0 6px 12px rgba(0,0,0,.45))',
+            ? 'drop-shadow(0 20px 28px rgba(0,0,0,0.65))'
+            : 'drop-shadow(0 6px 14px rgba(0,0,0,0.5))',
         }}
       >
         <BowlSVG c1={c1} c2={c2} id={`board-${p.id}`} />
@@ -122,13 +118,13 @@ function BoardItem({
       <div className="text-center px-1">
         <p
           className="font-semibold text-[12px] sm:text-[13px] leading-snug"
-          style={{ color: '#F0E0C0', textShadow: '0 1px 3px rgba(0,0,0,.6)' }}
+          style={{ color: '#F2E4C8', textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}
         >
           {p.name}
         </p>
         <p
           className="text-[11px] sm:text-[12px] mt-0.5 font-semibold"
-          style={{ color: '#E8C870', textShadow: '0 1px 2px rgba(0,0,0,.4)' }}
+          style={{ color: '#EAC96A', textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}
         >
           {money(p.price)}
         </p>
